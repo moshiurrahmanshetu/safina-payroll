@@ -1,0 +1,110 @@
+@extends('layouts.admin')
+@section('title', 'Water Park Counters')
+@section('content')
+
+<!-- Page Header -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark"><i class="fa fa-desktop mr-2"></i>Water Park Counters @if($counters) ({{count($counters)}}) @endif </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+          <li class="breadcrumb-item active">Water Park Counters</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Card -->
+<div class="card card-outline card-primary shadow">
+  <div class="card-header">
+    <h3 class="card-title"><i class="fa fa-table mr-2"></i>Counter List</h3>
+    <div class="card-tools">
+      @if(checkMenuActive('WaterParkCounterController@create', $menu_list))
+      <a href="{{ route('water_park_counters.create') }}" class="btn btn-success btn-sm">
+        <i class="fa fa-plus-circle mr-1"></i> Create Counter
+      </a>
+      @endif
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    @if(session('flash_success'))
+    <div class="alert alert-success m-3">
+      <i class="fa fa-check-circle mr-2"></i>{{ session('flash_success') }}
+    </div>
+    @endif
+
+    @if(session('flash_error'))
+    <div class="alert alert-danger m-3">
+      <i class="fa fa-exclamation-circle mr-2"></i>{{ session('flash_error') }}
+    </div>
+    @endif
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Assigned Users</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($counters as $counter)
+          <tr>
+            <td>{{ $counter->id }}</td>
+            <td><strong>{{ $counter->name }}</strong></td>
+            <td>
+              @if($counter->status == 1)
+                <span class="badge badge-success">Active</span>
+              @else
+                <span class="badge badge-danger">Inactive</span>
+              @endif
+            </td>
+            <td>
+              @if($counter->users->count() > 0)
+                @foreach($counter->users as $user)
+                  <span class="badge badge-info">{{ $user->name }}</span>
+                @endforeach
+              @else
+                <span class="text-muted">No users assigned</span>
+              @endif
+            </td>
+            <td>
+              @if(checkMenuActive('WaterParkCounterController@edit', $menu_list))
+              <a href="{{ route('water_park_counters.edit', $counter->id) }}" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit"></i> Edit
+              </a>
+              @endif
+              @if(checkMenuActive('WaterParkCounterController@destroy', $menu_list))
+              {{ Form::open(['route' => ['water_park_counters.destroy', $counter->id], 'method' => 'DELETE', 'style' => 'display:inline']) }}
+              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                <i class="fa fa-trash"></i> Delete
+              </button>
+              {{ Form::close() }}
+              @endif
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              <i class="fa fa-inbox fa-2x mb-2"></i><br>
+              No counters found
+            </td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@endsection

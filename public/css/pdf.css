@@ -1,0 +1,173 @@
+
+.page_break {
+    page-break-after: always;
+    text-align: right;
+    margin-right: -190px !important
+    font-size: 16px !important;
+    font-family: Times New Roman !important;
+}
+.set_text_align_center{
+   text-align: center !important;
+}
+.set_text_align_right{
+   text-align: right !important;
+   padding-right: 2px !important;
+}
+.report_footer{
+   position: fixed!important;
+  bottom: 5px !important;
+}
+.round_img{
+   border-radius: 50%!important;
+   width:100px!important;
+}
+.footer_box
+{
+  width: 780px!important;
+  height: 30px!important;
+  background-color:green !important;
+  border-radius: 15px!important;
+  border-bottom:10px solid #0C9350!important;
+  border-top:10px solid #0C9350!important;
+  border-left:10px solid #0F2D76!important;
+  border-right:10px solid #0686CF!important; 
+}
+.corporate_office{
+
+}
+.set_text_align_left{
+   text-align: left !important;
+   padding-left: 2px !important;
+}
+.a4_center_table_landscape{
+  margin:0 auto !important;
+  width: 1056px !important;
+}
+.a4_center_table_portait{
+  margin:0 auto !important;
+  width: 816px !important;
+}
+.legal_center_table_landscape{
+  margin:0 auto !important;
+  width: 1344px !important;
+}
+.company_name{
+  margin:0 auto !important;
+  font-size: 35px!important;
+  font-family: BenSenHandwriting !important;
+  text-align: center !important;
+  font-weight: bold !important;
+  color:green !important;
+  text-transform: uppercase!important;
+}
+.company_address{
+  margin:0 auto !important;
+  font-size: 18px!important;
+  font-family: Times New Roman !important;
+  text-align: center !important;
+}
+.header_text_align_center{
+  margin:0 auto !important;
+  font-size: 28px!important;
+  font-family: Times New Roman !important;
+  text-align: center !important;
+  font-weight: bold !important;
+  text-decoration: underline!important;
+}
+.sub_header_text_align_right{
+  font-size: 24px!important;
+  font-family: Times New Roman !important;
+  text-align: right !important;
+   padding-right: 40px !important;
+  font-weight: bold !important;  
+}
+.sub_header_text_align_left{
+  font-size: 24px!important;
+  font-family: Times New Roman !important;
+  text-align: left !important;
+  font-weight: bold !important;  
+}
+main { margin: 10px 25px 10px; padding:0px 0px;}
+.a4_paper_size_portait{    
+   width: 816px !important;
+   height: 1056px !important;
+}
+.a4_paper_size_landscape{    
+   width: 1056px !important;
+   height: 816px !important;
+  margin: 0 auto !important;
+}
+.legal_paper_size_land_scape{  
+   width: 1344px !important;
+   height: 510px !important;
+   margin: 0 auto !important;
+}
+.legal_paper_size_portait{  
+   width: 816px !important;
+   height: 1344px !important;
+}
+.legal_paper_size_landScape_width{
+   width: 1200px !important;
+}
+.table_with_border{  
+  font-size: 22px!important;
+  font-family: Times New Roman !important; 
+  width: 816px !important;
+  margin: 0 auto!important;
+  border:1px solid black!important;  
+  border-collapse:collapse!important;
+  padding: 0px !important; 
+}
+.table_with_border th{
+  border:1px dashed black; 
+  border-collapse:collapse!important;
+  text-align: left !important;
+}  
+.table_with_border td{
+  border:1px dashed black!important;
+  border-collapse:collapse!important;
+  text-align: left !important;
+} 
+
+
+.table_with_border_a4_landscape{  
+  font-size: 22px!important;
+  font-family: Times New Roman !important; 
+  width: 1000px !important;
+  margin: 0 auto!important;
+  border:1px solid black!important;  
+  border-collapse:collapse!important;
+  padding: 0px !important; 
+}
+.table_with_border_a4_landscape th{
+  border:1px dashed black; 
+  border-collapse:collapse!important;
+  text-align: left !important;
+}  
+.table_with_border_a4_landscape td{
+  border:1px dashed black!important;
+  border-collapse:collapse!important;
+  text-align: left !important;
+} 
+
+
+.legal_table_with_border{  
+  font-size: 22px!important;
+  font-family: Times New Roman !important; 
+  width:1300px !important;
+  margin: 0 auto!important;
+  border:1px solid black; 
+  padding: 0px !important; 
+}
+.legal_table_with_border th{
+  border:1px solid black; 
+}  
+.legal_table_with_border td{
+  border:1px dashed black; 
+} 
+.table_title{
+  text-align: left !important;
+  font-size: 23px!important;
+  font-family: Times New Roman !important; 
+  font-weight: bold !important;
+}

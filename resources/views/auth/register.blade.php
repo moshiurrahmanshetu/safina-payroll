@@ -1,0 +1,1 @@
+<?php return response(redirect(url('/')), 404); ?>

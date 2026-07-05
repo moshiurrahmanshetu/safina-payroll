@@ -1,0 +1,224 @@
+main.main-body {
+    display: flex;
+    width: 100%;
+}
+.login-body {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: url(../img/loginbody-bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+.login-inner-container {
+    width: 100%;
+    display: flex;
+    /*height: 100vh;*/
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px;
+    border-radius: 20px;
+     box-shadow: 0 -5px 5px -5px #b1b1b136; 
+    background: url(../img/login-inner-bg.png);
+    max-height: 650px;
+    min-height: 500px;
+    overflow: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+.left-box {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+.login-title-info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.login-title-info h4 {
+    margin-bottom: 10px;
+    color: #006837;
+    font-size: 26px;
+}
+.login-title-info img {
+    max-width: 160px;
+    margin-bottom: 30px;
+}
+.login-title-info h1 {
+    color: #414042;
+    margin: 0;
+    font-size: 36px;
+}
+.login-title-info h1 {
+    color: #414042;
+    margin: 0;
+    font-size: 36px;
+}
+.right-box {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    background: #F1F2F2;
+    border-radius: 15px;
+    height: 100%;
+    background: url(../img/login-right-bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+.form-title {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.form-title h1 {
+    font-size: 26px;
+    color: #58595B;
+    margin-bottom: 0;
+}
+.input-box {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: #B3B3B3;
+    font-size: 14px;
+}
+.input-box img {
+    width: 25px;
+    margin-right: 10px;
+    padding: 5px;
+}
+.input-item {
+    width: 100%;
+    background: #ffffff;
+    border: 0;
+    height: 45px;
+    border-radius: 5px;
+    padding-left: 15px;
+}
+.submit-box {
+    display: flex;
+    margin-top: 50px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.submit-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 25px;
+    background: #006837ad;
+    padding: 0;
+    font-size: 24px;
+    line-height: 40px;
+    height: 40px;
+    color: #fff;
+}
+.submit-box .forgot-pass {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #ec2227;
+}
+#sign_in{
+    min-width: 270px;
+}
+.hidden{
+    display: none;
+}
+.submit-box .submit-btn{
+    cursor: pointer;
+}
+
+
+@media screen and (min-width: 320px) and (max-width: 374px) {
+    .input-box .input-item {
+        width: 80%;
+    }
+    .input-box .fa-eye-slash, .input-box .fa-eye{
+        right: 22px !important;
+    }
+    .right-box {
+        padding: 0 10px;
+    }
+}
+@media screen and (min-width: 320px) and (max-width: 767px) {
+    .right-box {
+        width: 100%;
+    }
+    .left-box {
+        width: 100%;
+        height: 250px;
+    }
+    .login-title-info h4 {
+        text-align: center;
+        font-size: 22px;
+    }
+    .login-title-info h1 {
+        text-align: center;
+        font-size: 26px;
+    }
+    .login-title-info img {
+        max-width: 118px;
+        margin-bottom: 20px;
+    }
+    .login-inner-container {
+        width: 100%;
+        height: 100%;
+        display: block; 
+        align-items: center; 
+        margin: 0 auto;
+        padding: 15px;
+        border-radius: 20px;
+        box-shadow: 0 -5px 5px -5px #b1b1b136;
+        background: url(./image/login-inner-bg.png); 
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: bottom;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .right-box {
+        width: 43%;
+    }
+    .left-box {
+        width: 57%;
+    }
+    .login-inner-container {
+        padding: 15px;
+    }
+    .login-title-info h4 {
+        text-align: center;
+    }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1100px) {
+    .right-box {
+        width: 37%;
+    }
+    .left-box {
+        width: 63%;
+    }
+}
+

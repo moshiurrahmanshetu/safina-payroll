@@ -1,0 +1,143 @@
+.form-group, form {
+    width: 100%;
+}
+.pull-left{
+    float: left !important;
+}
+
+.pull-right{
+    float: right !important;
+}
+.glyphicon:empty {
+    width: 1em;
+}
+
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -moz-osx-font-smoothing: grayscale;
+}
+body{
+background-color: #F8F8F8;
+}
+.multi-column .multi-column .col-1, .multi-column .col-2, .multi-column .col-3, .multi-column .col-4,
+.multi-column .col-5, .multi-column .col-6, .multi-column .col-7, .multi-column .col-8, .multi-column .col-9,
+.multi-column .col-10, .multi-column .col-11, .multi-column .col-12, .multi-column .col, .multi-column .col-auto,
+.multi-column .col-sm-1, .multi-column .col-sm-2, .multi-column .col-sm-3, .multi-column .col-sm-4,
+.multi-column .col-sm-5, .multi-column .col-sm-6, .multi-column .col-sm-7, .multi-column .col-sm-8,
+.multi-column .col-sm-9, .multi-column .col-sm-10, .multi-column .col-sm-11, .multi-column .col-sm-12,
+.multi-column .col-sm, .multi-column .col-sm-auto, .multi-column .col-md-1, .multi-column .col-md-2,
+.multi-column .col-md-3, .multi-column .col-md-4, .multi-column .col-md-5, .multi-column .col-md-6,
+.multi-column .col-md-7, .multi-column .col-md-8, .multi-column .col-md-9, .multi-column .col-md-10,
+.multi-column .col-md-11, .multi-column .col-md-12, .multi-column .col-md, .multi-column .col-md-auto,
+.multi-column .col-lg-1, .multi-column .col-lg-2, .multi-column .col-lg-3, .multi-column .col-lg-4,
+.multi-column .col-lg-5, .multi-column .col-lg-6, .multi-column .col-lg-7, .multi-column .col-lg-8,
+.multi-column .col-lg-9, .multi-column .col-lg-10, .multi-column .col-lg-11, .multi-column .col-lg-12,
+.multi-column .col-lg, .multi-column .col-lg-auto, .multi-column .col-xl-1, .multi-column .col-xl-2,
+.multi-column .col-xl-3, .multi-column .col-xl-4, .multi-column .col-xl-5, .multi-column .col-xl-6,
+.multi-column .col-xl-7, .multi-column .col-xl-8, .multi-column .col-xl-9, .multi-column .col-xl-10,
+.multi-column .col-xl-11, .multi-column .col-xl-12, .multi-column .col-xl, .multi-column .col-xl-auto {
+    float: left;
+}
+.txt_white_back_green{
+text-align:center;
+font-size:18px;
+color:white;
+background-color:#00CCFF;
+}
+.txt_green{
+color:green !important;
+}
+.background_white{
+    background-color:#FFFFFF !important; 
+}
+.background_blue{
+    background-color:#00A5A5 !important; 
+}
+.txt_center{
+    text-align:center!important;
+    margin:0 auto!important;
+}
+.search_btn{
+    background-color: #49E0FB !important;
+    border:1px solid #49E0FB !important;
+}
+.txt_white{
+color:white!important;
+}
+.company_name_header{
+    text-align:center!important;
+    margin:0 auto!important;
+    color: white!important;
+    text-shadow: 2px 2px #00B8EE!important;
+    font-family:Times New Roman; 
+    font-size:30px !important;
+    font-weight: bold !important;
+}
+.company_address{
+  text-align:center!important;
+    margin:0 auto!important;
+    color:gold !important; 
+    text-shadow: 0px 0px #00B8EE!important;   
+    font-family:Times New Roman; 
+    font-size:18px !important;
+    font-weight: bold !important;  
+}
+.top_header_img{
+    width: 65px !important;
+    /*height:45px !important;*/
+}
+#th_bonus, .td_bonus{
+    display: none;
+}
+.sidebar .nav-link.active .nav-icon {
+  color: #fff;
+}
+.delete-form{
+    padding: 0px 5px;
+}
+@media (min-width: 992px){
+    .header-fixed .app-header {
+        height: 72px;
+    }
+    .header-fixed .app-body {
+        margin-top: 72px;
+    }
+}
+@media (max-width: 1100px){
+    .form-control {
+        padding: 0.375rem 0.1rem;
+    }
+    td, th{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+}
+sup, sub{
+    color: #f00;
+}
+td .btn-info, td .btn-primary, td .btn-success, td .btn-warning, td .btn-danger{
+    padding: 0 3px;
+}
+button.btn-info, button.btn-primary, button.btn-success, button.btn-warning, button.btn-danger{
+    padding: 0.25rem 0.5rem;
+}
+.mrs-done{
+    background-color: #0f0 !important;
+}
+#auto-text-feed .btn-info{
+    cursor: pointer;
+    margin: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 26px;
+    font-size: 16px;
+}
