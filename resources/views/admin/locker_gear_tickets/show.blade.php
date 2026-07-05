@@ -97,20 +97,30 @@
     <!-- Items -->
     <h6 class="font-weight-bold mb-2"><i class="fa fa-box mr-1"></i>Rented Items:</h6>
     <table class="table table-sm table-bordered">
-      @foreach($ticket->items as $item)
-      <tr>
-        <td>
-          @if($item->item_type == 'locker')
-            <i class="fa fa-lock mr-1 text-info"></i> Locker
-          @else
-            <i class="fa fa-tshirt mr-1 text-warning"></i> Gear
-          @endif
-        </td>
-        <td><strong>{{ $item->item->name ?? 'N/A' }}</strong></td>
-        <td class="text-center">x{{ $item->quantity }}</td>
-      </tr>
-      @endforeach
-    </table>
+    @foreach($ticket->items as $item)
+        <tr>
+            <td>
+                @if($item->item_type == 'locker')
+                    <i class="fa fa-lock text-primary mr-1"> Locker</i>
+                @else
+                    <i class="fa fa-tshirt text-danger mr-1"> Gear</i>
+                @endif
+            </td>
+
+            <td>
+                @if($item->item_type == 'locker')
+                    {{ $item->locker->name ?? 'N/A' }}
+                @else
+                    {{ $item->gear->name ?? 'N/A' }}
+                @endif
+            </td>
+
+            <td class="text-center">
+                x{{ $item->quantity }}
+            </td>
+        </tr>
+    @endforeach
+</table>
 
     <!-- Billing Breakdown -->
     <h6 class="font-weight-bold mb-2"><i class="fa fa-receipt mr-1"></i>Billing:</h6>

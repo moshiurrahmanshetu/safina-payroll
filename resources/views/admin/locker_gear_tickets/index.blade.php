@@ -132,11 +132,17 @@
             </td>
             <td>
               @foreach($ticket->items as $item)
-                @if($item->item_type == 'locker')
-                  <span class="badge badge-info"><i class="fa fa-lock mr-1"></i>{{ $item->item->name ?? 'N/A' }}</span>
-                @else
-                  <span class="badge badge-warning"><i class="fa fa-tshirt mr-1"></i>{{ $item->item->name ?? 'N/A' }} x{{ $item->quantity }}</span>
-                @endif
+                  @if($item->item_type == 'locker')
+                      <span class="badge badge-info">
+                          <i class="fa fa-lock mr-1"></i>
+                          {{ $item->locker->name ?? 'N/A' }}
+                      </span>
+                  @else
+                      <span class="badge badge-warning">
+                          <i class="fa fa-tshirt mr-1"></i>
+                          {{ $item->gear->name ?? 'N/A' }} x{{ $item->quantity }}
+                      </span>
+                  @endif
               @endforeach
             </td>
             <td>
