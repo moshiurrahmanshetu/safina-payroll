@@ -70,6 +70,8 @@ use App\Http\Controllers\LockerGearCounterController;
 use App\Http\Controllers\LockerGearCashHandoverController;
 use App\Http\Controllers\PermanentEmployeeController;
 use App\Http\Controllers\WorkAreaController;
+use App\Http\Controllers\DailyWorkerController;
+use App\Http\Controllers\ContractWorkerController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -311,6 +313,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::resource('permanent_employees', PermanentEmployeeController::class);
   Route::get('/permanent_employees/get_user_details/{id}', [PermanentEmployeeController::class, 'getUserDetails'])->name('permanent_employees.get_user_details');
   Route::resource('work_areas', WorkAreaController::class);
+  Route::resource('daily_workers', DailyWorkerController::class);
+  Route::get('/daily_workers/get_user_details/{id}', [DailyWorkerController::class, 'getUserDetails'])->name('daily_workers.get_user_details');
+  Route::resource('contract_workers', ContractWorkerController::class);
+  Route::get('/contract_workers/get_user_details/{id}', [ContractWorkerController::class, 'getUserDetails'])->name('contract_workers.get_user_details');
 
 
 });

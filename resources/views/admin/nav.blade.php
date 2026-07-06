@@ -689,7 +689,7 @@
     @endif
 
     <!-- HR & Payroll Management Menu -->
-    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit'], $menu_list))
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit'], $menu_list))
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
           <i class="nav-icon icon-people"></i> HR & Payroll</a>
@@ -716,6 +716,30 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('work_areas.index') }}">
               <i class="nav-icon icon-list"></i>Work Areas List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('DailyWorkerController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('daily_workers.create') }}">
+              <i class="nav-icon icon-note"></i>Add Daily Worker</a>
+          </li>
+          @endif
+          @if(checkMenuActive('DailyWorkerController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('daily_workers.index') }}">
+              <i class="nav-icon icon-list"></i>Daily Workers List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('ContractWorkerController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('contract_workers.create') }}">
+              <i class="nav-icon icon-note"></i>Add Contract Worker</a>
+          </li>
+          @endif
+          @if(checkMenuActive('ContractWorkerController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('contract_workers.index') }}">
+              <i class="nav-icon icon-list"></i>Contract Workers List</a>
           </li>
           @endif
         </ul>
