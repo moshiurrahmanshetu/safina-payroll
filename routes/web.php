@@ -68,6 +68,7 @@ use App\Http\Controllers\LockerGearTicketController;
 use App\Http\Controllers\LockerGearReportController;
 use App\Http\Controllers\LockerGearCounterController;
 use App\Http\Controllers\LockerGearCashHandoverController;
+use App\Http\Controllers\PermanentEmployeeController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -304,6 +305,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/locker-gear-cash-handovers/approval', [LockerGearCashHandoverController::class, 'approval'])->name('locker_gear_cash_handovers.approval');
   Route::post('/locker-gear-cash-handovers/{id}/approve', [LockerGearCashHandoverController::class, 'approve'])->name('locker_gear_cash_handovers.approve');
   Route::post('/locker-gear-cash-handovers/{id}/reject', [LockerGearCashHandoverController::class, 'reject'])->name('locker_gear_cash_handovers.reject');
+
+  // HR & Payroll Routes
+  Route::resource('permanent_employees', PermanentEmployeeController::class);
+  Route::get('/permanent_employees/get_user_details/{id}', [PermanentEmployeeController::class, 'getUserDetails'])->name('permanent_employees.get_user_details');
 
 
 });

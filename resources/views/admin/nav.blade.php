@@ -688,5 +688,27 @@
       </li>
     @endif
 
+    <!-- HR & Payroll Management Menu -->
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit'], $menu_list))
+      <li class="nav-item nav-dropdown">
+        <a class="nav-link nav-dropdown-toggle" href="#">
+          <i class="nav-icon icon-people"></i> HR & Payroll</a>
+        <ul class="nav-dropdown-items">
+          @if(checkMenuActive('PermanentEmployeeController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('permanent_employees.create') }}">
+              <i class="nav-icon icon-note"></i>Add Permanent Employee</a>
+          </li>
+          @endif
+          @if(checkMenuActive('PermanentEmployeeController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('permanent_employees.index') }}">
+              <i class="nav-icon icon-list"></i>Permanent Employees List</a>
+          </li>
+          @endif
+        </ul>
+      </li>
+    @endif
+
   </ul>
 </nav>
