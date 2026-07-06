@@ -689,7 +689,7 @@
     @endif
 
     <!-- HR & Payroll Management Menu -->
-    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit'], $menu_list))
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit'], $menu_list))
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
           <i class="nav-icon icon-people"></i> HR & Payroll</a>
@@ -704,6 +704,18 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('permanent_employees.index') }}">
               <i class="nav-icon icon-list"></i>Permanent Employees List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('WorkAreaController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('work_areas.create') }}">
+              <i class="nav-icon icon-note"></i>Add Work Area</a>
+          </li>
+          @endif
+          @if(checkMenuActive('WorkAreaController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('work_areas.index') }}">
+              <i class="nav-icon icon-list"></i>Work Areas List</a>
           </li>
           @endif
         </ul>

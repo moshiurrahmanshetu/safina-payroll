@@ -69,6 +69,7 @@ use App\Http\Controllers\LockerGearReportController;
 use App\Http\Controllers\LockerGearCounterController;
 use App\Http\Controllers\LockerGearCashHandoverController;
 use App\Http\Controllers\PermanentEmployeeController;
+use App\Http\Controllers\WorkAreaController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -309,6 +310,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   // HR & Payroll Routes
   Route::resource('permanent_employees', PermanentEmployeeController::class);
   Route::get('/permanent_employees/get_user_details/{id}', [PermanentEmployeeController::class, 'getUserDetails'])->name('permanent_employees.get_user_details');
+  Route::resource('work_areas', WorkAreaController::class);
 
 
 });
