@@ -689,7 +689,7 @@
     @endif
 
     <!-- HR & Payroll Management Menu -->
-    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit'], $menu_list))
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit', 'SalaryStructureController@create', 'SalaryStructureController@index', 'SalaryStructureController@edit'], $menu_list))
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
           <i class="nav-icon icon-people"></i> HR & Payroll</a>
@@ -740,6 +740,18 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('contract_workers.index') }}">
               <i class="nav-icon icon-list"></i>Contract Workers List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('SalaryStructureController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('salary_structures.create') }}">
+              <i class="nav-icon icon-note"></i>Add Salary Structure</a>
+          </li>
+          @endif
+          @if(checkMenuActive('SalaryStructureController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('salary_structures.index') }}">
+              <i class="nav-icon icon-list"></i>Salary Structures List</a>
           </li>
           @endif
         </ul>
