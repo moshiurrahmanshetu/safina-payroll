@@ -97,7 +97,8 @@ class RegisterController extends Controller
       'email' => 'required|string|email|max:255|unique:users',
       'password' => 'required|string|min:6|confirmed',
       'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:1024',
-      'signature' => 'image|mimes:jpeg,png,jpg,gif,svg|max:200'
+      'signature' => 'image|mimes:jpeg,png,jpg,gif,svg|max:200',
+      'salary_processing' => 'required'
     ]);
     if($validator->fails()){
       return redirect()->back()->withErrors($validator)->withInput();
@@ -158,7 +159,8 @@ class RegisterController extends Controller
         'mobile_no' => 'required',
         'email' => 'required|string|email|max:255|unique:users,email,'.$id,
         'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:1024',
-        'signature' => 'image|mimes:jpeg,png,jpg,gif,svg|max:200'
+        'signature' => 'image|mimes:jpeg,png,jpg,gif,svg|max:200',
+        'salary_processing' => 'required'
       )
     );
     if($validator->fails()){

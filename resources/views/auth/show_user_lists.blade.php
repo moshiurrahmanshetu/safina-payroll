@@ -18,6 +18,7 @@
             <th>Mobile</th>
             <th>Role</th>
             <th>Status</th>
+            <th>Salary Processing</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -33,8 +34,9 @@
             <td>{{$data->email}}</td>
             <td>{{$data->mobile_no}}</td>
             <td>{{$data->role->name}}</td>
-            
+
             <td><strong class="btn-{{ config('myhelpers.status_color')[$data->status] }}">{{config('myhelpers.status')[$data->status]}}</strong></td>
+            <td><strong class="btn-{{ config('myhelpers.salary_processing_color')[$data->salary_processing ?? 0] }}">{{config('myhelpers.salary_processing')[$data->salary_processing ?? 0]}}</strong></td>
             <td> 
               {!! HTML::decode(link_to_route('users.edit', '<i class="nav-icon icon-pencil"></i>', array($data->id)))!!}
             </td>

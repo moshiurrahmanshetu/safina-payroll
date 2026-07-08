@@ -81,7 +81,13 @@
         {{Form::select('status',config('myhelpers.status'),null,array('class' => 'form-control'))}}
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="salary_processing" class="control-label">Salary Processing</label>
+        {{Form::select('salary_processing',config('myhelpers.salary_processing'),0,array('class' => 'form-control'))}}
+      </div>
+    </div>
+    <div class="col-md-4">
       <div class="form-group">
         <label class="control-label">Address</label>
         {{Form::text('address',null,array('class' => 'form-control'))}}

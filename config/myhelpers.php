@@ -152,6 +152,10 @@ return [
     '0'=>'Fixed',
     '1'=>'Percentage'
   ],
+  'salary_processing'=>[
+    '0'=>'No',
+    '1'=>'Yes'
+  ],
   'discount_rule_type'=>[
     '0'=>'Promo',
     '1'=>'Group',
@@ -160,6 +164,14 @@ return [
   'discount_type'=>[
     '0'=>'Fixed',
     '1'=>'Percentage'
+  ],
+  'salary_processing'=>[
+    '0'=>'No',
+    '1'=>'Yes'
+  ],
+  'salary_processing_color'=>[
+    '0'=>'secondary',
+    '1'=>'success'
   ]
 ]
 ?>
