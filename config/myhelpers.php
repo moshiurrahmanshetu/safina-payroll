@@ -172,6 +172,24 @@ return [
   'salary_processing_color'=>[
     '0'=>'secondary',
     '1'=>'success'
+  ],
+  'attendance_status'=>[
+    'Present'=>'Present',
+    'Late'=>'Late',
+    'Half Day'=>'Half Day',
+    'Absent'=>'Absent',
+    'Leave'=>'Leave',
+    'Holiday'=>'Holiday',
+    'Weekly Off'=>'Weekly Off'
+  ],
+  'attendance_status_color'=>[
+    'Present'=>'success',
+    'Late'=>'warning',
+    'Half Day'=>'info',
+    'Absent'=>'danger',
+    'Leave'=>'primary',
+    'Holiday'=>'secondary',
+    'Weekly Off'=>'secondary'
   ]
 ]
 ?>

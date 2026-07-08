@@ -73,6 +73,8 @@ use App\Http\Controllers\WorkAreaController;
 use App\Http\Controllers\DailyWorkerController;
 use App\Http\Controllers\ContractWorkerController;
 use App\Http\Controllers\SalaryStructureController;
+use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\AttendanceController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -319,6 +321,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::resource('contract_workers', ContractWorkerController::class);
   Route::get('/contract_workers/get_user_details/{id}', [ContractWorkerController::class, 'getUserDetails'])->name('contract_workers.get_user_details');
   Route::resource('salary_structures', SalaryStructureController::class);
+  Route::resource('payrolls', PayrollController::class);
+  Route::get('/payrolls/get-salary-structure/{id}', [PayrollController::class, 'getSalaryStructure'])->name('payrolls.get_salary_structure')->withoutMiddleware('permissions');
+  Route::post('/payrolls/get-attendance-summary', [PayrollController::class, 'getAttendanceSummary'])->name('payrolls.get_attendance_summary')->withoutMiddleware('permissions');
+  Route::post('/payrolls/calculate-generated-salary', [PayrollController::class, 'calculateGeneratedSalary'])->name('payrolls.calculate_generated_salary')->withoutMiddleware('permissions');
+  Route::resource('attendances', AttendanceController::class);
 
 
 });

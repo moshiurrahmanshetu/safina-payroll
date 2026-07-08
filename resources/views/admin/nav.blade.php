@@ -689,7 +689,7 @@
     @endif
 
     <!-- HR & Payroll Management Menu -->
-    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit', 'SalaryStructureController@create', 'SalaryStructureController@index', 'SalaryStructureController@edit'], $menu_list))
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit', 'SalaryStructureController@create', 'SalaryStructureController@index', 'SalaryStructureController@edit', 'PayrollController@create', 'PayrollController@index', 'PayrollController@edit', 'AttendanceController@create', 'AttendanceController@index', 'AttendanceController@edit'], $menu_list))
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
           <i class="nav-icon icon-people"></i> HR & Payroll</a>
@@ -752,6 +752,30 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('salary_structures.index') }}">
               <i class="nav-icon icon-list"></i>Salary Structures List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('AttendanceController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('attendances.create') }}">
+              <i class="nav-icon icon-note"></i>Add Attendance</a>
+          </li>
+          @endif
+          @if(checkMenuActive('AttendanceController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('attendances.index') }}">
+              <i class="nav-icon icon-list"></i>Attendance List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('PayrollController@create', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('payrolls.create') }}">
+              <i class="nav-icon icon-note"></i>Generate Payroll</a>
+          </li>
+          @endif
+          @if(checkMenuActive('PayrollController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('payrolls.index') }}">
+              <i class="nav-icon icon-list"></i>Payroll List</a>
           </li>
           @endif
         </ul>
