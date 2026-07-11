@@ -41,7 +41,7 @@ use App\Http\Controllers\ServiceMetaFieldController;
 use App\Http\Controllers\CategoryMetaFieldController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\PricingRuleController;
+// use App\Http\Controllers\PricingRuleController;
 use App\Http\Controllers\DiscountRuleController;
 use App\Http\Controllers\TimeSlotController;
 use App\Http\Controllers\CounterController;
@@ -205,14 +205,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/bookings/availability/calendar', [BookingController::class, 'availabilityCalendar'])->name('bookings.availability.calendar');
   Route::get('/bookings/availability/get_calendar_data', [BookingController::class, 'getCalendarData'])->name('bookings.availability.get_calendar_data');
   Route::get('/get-services/{category_id}', [ServiceController::class, 'getServicesByCategory'])->name('get.services');
-  Route::resource('pricing_rules', PricingRuleController::class);
+  // Route::resource('pricing_rules', PricingRuleController::class);
   Route::resource('discount_rules', DiscountRuleController::class);
   Route::resource('time-slots', TimeSlotController::class);
   Route::get('/get-slots/{service_id}', [TimeSlotController::class, 'getSlotsByService'])->name('get.slots');
   Route::resource('counters', CounterController::class);
   Route::get('/counter-reports', [BookingController::class, 'counterReport'])->name('bookings.counter_report');
   Route::get('/counter-reports/data', [BookingController::class, 'getCounterReportData'])->name('bookings.counter_report.data');
-  Route::get('print_customer_details', array('as' => 'print_customer_details', 'uses' => 'CustomerController@print_customer_details'));
+  // Route::get('print_customer_details', array('as' => 'print_customer_details', 'uses' => 'CustomerController@print_customer_details'));
   Route::get('/booking-cash-handovers', [BookingCashHandoverController::class, 'index'])->name('booking_cash_handovers.index');
   Route::post('/booking-cash-handovers', [BookingCashHandoverController::class, 'store'])->name('booking_cash_handovers.store');
   Route::get('/booking-cash-handovers/approval', [BookingCashHandoverController::class, 'approval'])->name('booking_cash_handovers.approval');
@@ -321,10 +321,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::resource('contract_workers', ContractWorkerController::class);
   Route::get('/contract_workers/get_user_details/{id}', [ContractWorkerController::class, 'getUserDetails'])->name('contract_workers.get_user_details');
   Route::resource('salary_structures', SalaryStructureController::class);
+  Route::get('/payrolls/approval', [PayrollController::class, 'approval'])->name('payrolls.approval');
+  Route::get('/payrolls/approved', [PayrollController::class, 'approved'])->name('payrolls.approved');
   Route::resource('payrolls', PayrollController::class);
   Route::get('/payrolls/get-salary-structure/{id}', [PayrollController::class, 'getSalaryStructure'])->name('payrolls.get_salary_structure')->withoutMiddleware('permissions');
   Route::post('/payrolls/get-attendance-summary', [PayrollController::class, 'getAttendanceSummary'])->name('payrolls.get_attendance_summary')->withoutMiddleware('permissions');
   Route::post('/payrolls/calculate-generated-salary', [PayrollController::class, 'calculateGeneratedSalary'])->name('payrolls.calculate_generated_salary')->withoutMiddleware('permissions');
+  Route::get('/payrolls/{id}/submit', [PayrollController::class, 'submit'])->name('payrolls.submit');
+  Route::get('/payrolls/{id}/approve', [PayrollController::class, 'approve'])->name('payrolls.approve');
+  Route::post('/payrolls/{id}/return', [PayrollController::class, 'returnPayroll'])->name('payrolls.return');
   Route::resource('attendances', AttendanceController::class);
 
 

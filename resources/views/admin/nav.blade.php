@@ -373,10 +373,11 @@
               <i class="nav-icon icon-calendar"></i>Availability Calendar</a>
           </li>
           @if(checkMenuActive('PricingRuleController@index', $menu_list))
-            <li class="nav-item">
+          {{-- Pricing Rules route commented out due to missing controller --}}
+          {{-- <li class="nav-item">
               <a class="nav-link" href="{{ route('pricing_rules.index') }}">
                 <i class="nav-icon icon-tag"></i>Pricing Rules</a>
-            </li>
+            </li> --}}
           @endif
           @if(checkMenuActive('DiscountRuleController@index', $menu_list))
             <li class="nav-item">
@@ -776,6 +777,18 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('payrolls.index') }}">
               <i class="nav-icon icon-list"></i>Payroll List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('PayrollController@approval', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('payrolls.approval') }}">
+              <i class="nav-icon icon-check"></i>Payroll Approval</a>
+          </li>
+          @endif
+          @if(checkMenuActive('PayrollController@approved', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('payrolls.approved') }}">
+              <i class="nav-icon icon-check-circle"></i>Approved Payroll</a>
           </li>
           @endif
         </ul>

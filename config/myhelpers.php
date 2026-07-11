@@ -190,6 +190,18 @@ return [
     'Leave'=>'primary',
     'Holiday'=>'secondary',
     'Weekly Off'=>'secondary'
+  ],
+  'approval_status'=>[
+    'pending'=>'Pending',
+    'submitted'=>'Submitted',
+    'returned'=>'Returned',
+    'approved'=>'Approved'
+  ],
+  'approval_status_color'=>[
+    'pending'=>'secondary',
+    'submitted'=>'info',
+    'returned'=>'warning',
+    'approved'=>'success'
   ]
 ]
 ?>

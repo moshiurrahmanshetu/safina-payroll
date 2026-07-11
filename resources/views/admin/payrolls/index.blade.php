@@ -61,7 +61,8 @@
             <th>Bonus</th>
             <th>Deduction</th>
             <th>Net Salary</th>
-            <th>Status</th>
+            <th>Approval Status</th>
+            <th>Current Holder</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -78,21 +79,42 @@
           <td>{{$data->deduction}}</td>
           <td><strong>{{$data->net_salary}}</strong></td>
           <td>
-            @if($data->status == 0)
-              <strong class="btn-secondary">Draft</strong>
-            @elseif($data->status == 1)
-              <strong class="btn-info">Sent To Manager</strong>
-            @elseif($data->status == 2)
-              <strong class="btn-success">Approved</strong>
-            @elseif($data->status == 3)
-              <strong class="btn-danger">Rejected</strong>
+            @if($data->approval_status == 'pending')
+              <strong class="badge badge-{{config('myhelpers.approval_status_color.pending')}}">{{config('myhelpers.approval_status.pending')}}</strong>
+            @elseif($data->approval_status == 'submitted')
+              <strong class="badge badge-{{config('myhelpers.approval_status_color.submitted')}}">{{config('myhelpers.approval_status.submitted')}}</strong>
+            @elseif($data->approval_status == 'returned')
+              <strong class="badge badge-{{config('myhelpers.approval_status_color.returned')}}">{{config('myhelpers.approval_status.returned')}}</strong>
+            @elseif($data->approval_status == 'approved')
+              <strong class="badge badge-{{config('myhelpers.approval_status_color.approved')}}">{{config('myhelpers.approval_status.approved')}}</strong>
             @endif
           </td>
           <td>
-           {!! HTML::decode(link_to_route('payrolls.edit', '<i class="nav-icon icon-pencil"></i>', array($data->id)))!!}
-           {{ Form::open(array('route' => array('payrolls.destroy', $data->id), 'method'=>'DELETE', 'id'=>'del-form')) }}
-           <button type="submit" class="btn btn-danger delete-form" ><i class="nav-icon icon-trash"></i></button>
-           {{ Form::close() }}
+            @if($data->approval_status == 'pending')
+              <span>HR/Admin</span>
+            @elseif($data->approval_status == 'submitted')
+              <span>Manager</span>
+            @elseif($data->approval_status == 'returned')
+              <span>HR/Admin</span>
+            @elseif($data->approval_status == 'approved')
+              <span>Accounts/Payroll Archive</span>
+            @endif
+          </td>
+          <td>
+           @if($data->approval_status == 'pending')
+             {!! HTML::decode(link_to_route('payrolls.edit', '<i class="nav-icon icon-pencil"></i>', array($data->id)))!!}
+             {{ Form::open(array('route' => array('payrolls.destroy', $data->id), 'method'=>'DELETE', 'id'=>'del-form')) }}
+             <button type="submit" class="btn btn-danger delete-form" ><i class="nav-icon icon-trash"></i></button>
+             {{ Form::close() }}
+             <a href="{{ route('payrolls.submit', $data->id) }}" class="btn btn-success"><i class="nav-icon icon-check"></i></a>
+           @elseif($data->approval_status == 'returned')
+             {!! HTML::decode(link_to_route('payrolls.edit', '<i class="nav-icon icon-pencil"></i>', array($data->id)))!!}
+             <a href="{{ route('payrolls.submit', $data->id) }}" class="btn btn-success"><i class="nav-icon icon-check"></i></a>
+             @if($data->approval_remark)
+               <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#remarkModal{{$data->id}}"><i class="nav-icon icon-info"></i></button>
+             @endif
+           @endif
+           <a href="{{ route('payrolls.show', $data->id) }}" class="btn btn-info"><i class="nav-icon icon-eye"></i></a>
          </td>
        </tr>
        @php $i=$i+1; @endphp
@@ -103,6 +125,33 @@
 
 </div>
 </div>
+
+<!-- Remark Modals for Returned Payrolls -->
+@foreach ($payrolls as $data)
+@if($data->approval_status == 'returned' && $data->approval_remark)
+<div class="modal fade" id="remarkModal{{$data->id}}" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Return Remark</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="control-label">Remark:</label>
+          <textarea class="form-control" rows="3" readonly>{{ $data->approval_remark }}</textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+@endforeach
 
 @endsection
 @section('script')

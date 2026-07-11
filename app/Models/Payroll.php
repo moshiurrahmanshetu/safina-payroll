@@ -15,6 +15,9 @@ class Payroll extends Model
         'deduction' => 'decimal:2',
         'net_salary' => 'decimal:2',
         'status' => 'integer',
+        'approved_at' => 'datetime',
+        'returned_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     public function user()
@@ -35,5 +38,15 @@ class Payroll extends Model
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function returner()
+    {
+        return $this->belongsTo(User::class, 'returned_by');
     }
 }
