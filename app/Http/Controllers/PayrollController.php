@@ -4,9 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Payroll;
 use App\Models\SalaryStructure;
+use App\Models\Salary;
+
 use App\Models\User;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PayrollController extends Controller
 {
@@ -100,11 +103,11 @@ class PayrollController extends Controller
    */
   public function create()
   {
-    // Get users with salary_processing = 1 and who have a salary structure
-    $usersWithSalaryStructure = SalaryStructure::pluck('user_id')->toArray();
+    // Get users with salary_processing = 1 and who have at least one salary record
+    $usersWithSalary = Salary::pluck('user_id')->toArray();
     $users = User::where('salary_processing', 1)
                  ->where('status', 1)
-                 ->whereIn('id', $usersWithSalaryStructure)
+                 ->whereIn('id', $usersWithSalary)
                  ->orderBy('name','asc')
                  ->pluck('name','id');
 
@@ -123,7 +126,6 @@ class PayrollController extends Controller
 
     $validator = Validator::make($data, [
       'user_id' => 'required',
-      'salary_structure_id' => 'required',
       'payroll_month' => 'required|date_format:Y-m',
       'generated_salary' => 'required|numeric|min:0',
       'bonus' => 'nullable|numeric|min:0',
@@ -143,8 +145,16 @@ class PayrollController extends Controller
       return redirect()->back()->withErrors(['payroll_month' => 'Payroll already exists for this employee in this month'])->withInput();
     }
 
+    // Get salary using common method
+    $salary = $this->getSalaryForPayroll($data['user_id'], $data['payroll_month']);
+    
+    if (!$salary) {
+      return redirect()->back()->withErrors(['user_id' => 'No salary found for this employee effective before this payroll month'])->withInput();
+    }
+
     $user_id = Auth::user()->id;
     $data['created_by'] = $data['updated_by'] = $user_id;
+    $data['salary_id'] = $salary->id;
 
     // Set default values for nullable fields
     $data['attendance_adjustment'] = 0;
@@ -274,19 +284,20 @@ class PayrollController extends Controller
   }
 
   /**
-   * Get salary structures for a user via AJAX
+   * Get current salary for a user via AJAX
    *
    * @param  int  $userId
    * @return \Illuminate\Http\Response
    */
   public function getSalaryStructure($userId)
   {
-    $salaryStructures = SalaryStructure::where('user_id', $userId)
-                                        ->where('status', 1)
-                                        ->get(['id', 'basic_salary']);
+    $currentSalary = Salary::where('user_id', $userId)
+                          ->where('is_current', 1)
+                          ->where('status', 1)
+                          ->first(['id', 'basic_salary', 'house_rent', 'medical', 'transport', 'food', 'mobile', 'other_allowance', 'festival_bonus', 'late_fine', 'absent_deduction', 'advance_salary', 'tax', 'pf', 'other_deduction']);
 
     return response()->json([
-      'salary_structures' => $salaryStructures
+      'current_salary' => $currentSalary
     ]);
   }
 
@@ -332,36 +343,53 @@ class PayrollController extends Controller
   }
 
   /**
-   * Calculate generated salary based on salary structure and attendance
+   * Get salary for user based on effective_from date
+   * Finds the latest salary where effective_from <= end of payroll month
+   *
+   * @param  int  $userId
+   * @param  string  $payrollMonth (YYYY-MM format)
+   * @return \App\Models\Salary|null
+   */
+  private function getSalaryForPayroll($userId, $payrollMonth)
+  {
+    $payrollMonthDate = Carbon::parse($payrollMonth . '-01')
+                               ->endOfMonth()
+                               ->toDateString();
+    
+    return Salary::where('user_id', $userId)
+                 ->where('effective_from', '<=', $payrollMonthDate)
+                 ->where('status', 1)
+                 ->orderBy('effective_from', 'desc')
+                 ->first();
+  }
+
+  /**
+   * Calculate generated salary based on current salary and attendance
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function calculateGeneratedSalary(Request $request)
   {
-    $salaryStructureId = $request->salary_structure_id;
     $userId = $request->user_id;
     $payrollMonth = $request->payroll_month;
     $bonus = $request->bonus ?? 0;
     $deduction = $request->deduction ?? 0;
 
-    // Get salary structure
-    $salaryStructure = SalaryStructure::where('id', $salaryStructureId)
-                                       ->where('user_id', $userId)
-                                       ->first();
+    // Get current salary from salaries table
+    $salary = Salary::where('user_id', $userId)
+                     ->where('is_current', 1)
+                     ->where('status', 1)
+                     ->first();
 
-    if (!$salaryStructure) {
-      return response()->json(['error' => 'Salary structure not found'], 404);
+    if (!$salary) {
+      return response()->json(['error' => 'Current salary not found for this employee'], 404);
     }
 
-    // Parse the month to get start and end dates
-    $startDate = date('Y-m-01', strtotime($payrollMonth));
-    $endDate = date('Y-m-t', strtotime($payrollMonth));
-
-    // Get attendance summary
-    $attendances = Attendance::where('user_id', $userId)
-                              ->whereBetween('attendance_date', [$startDate, $endDate])
-                              ->get();
+    // Get attendance summary from attendance_months table
+    $attendanceMonth = \App\Models\AttendanceMonth::where('user_id', $userId)
+                                                  ->where('attendance_month', $payrollMonth)
+                                                  ->first();
 
     $summary = [
       'Present' => 0,
@@ -373,10 +401,14 @@ class PayrollController extends Controller
       'Weekly Off' => 0
     ];
 
-    foreach ($attendances as $attendance) {
-      if (isset($summary[$attendance->status])) {
-        $summary[$attendance->status]++;
-      }
+    if ($attendanceMonth) {
+      $summary['Present'] = $attendanceMonth->total_present;
+      $summary['Late'] = $attendanceMonth->total_late;
+      $summary['Half Day'] = $attendanceMonth->total_halfday;
+      $summary['Absent'] = $attendanceMonth->total_absent;
+      $summary['Leave'] = $attendanceMonth->total_leave;
+      $summary['Holiday'] = $attendanceMonth->total_holiday;
+      $summary['Weekly Off'] = $attendanceMonth->total_weekly_off;
     }
 
     $lateCount = $summary['Late'];
@@ -384,32 +416,41 @@ class PayrollController extends Controller
     $halfDayCount = $summary['Half Day'];
 
     // Calculate deductions
-    $lateDeduction = $lateCount * $salaryStructure->late_fine;
+    $lateDeduction = $lateCount * $salary->late_fine;
     $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
-    $absentDeduction = $effectiveAbsent * $salaryStructure->absent_deduction;
+    $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
 
     // Calculate total allowances
-    $totalAllowances = $salaryStructure->basic_salary +
-                      $salaryStructure->house_rent +
-                      $salaryStructure->medical +
-                      $salaryStructure->transport +
-                      $salaryStructure->food +
-                      $salaryStructure->mobile +
-                      $salaryStructure->other_allowance +
-                      $salaryStructure->festival_bonus;
+    $totalAllowances = $salary->basic_salary +
+                      $salary->house_rent +
+                      $salary->medical +
+                      $salary->transport +
+                      $salary->food +
+                      $salary->mobile +
+                      $salary->other_allowance +
+                      $salary->festival_bonus;
 
     // Calculate total deductions
-    $totalDeductions = $salaryStructure->tax +
-                       $salaryStructure->pf +
-                       $salaryStructure->other_deduction +
-                       $salaryStructure->advance_salary +
+    $totalDeductions = $salary->tax +
+                       $salary->pf +
+                       $salary->other_deduction +
+                       $salary->advance_salary +
                        $lateDeduction +
                        $absentDeduction;
 
     // Calculate generated salary
     $generatedSalary = $totalAllowances - $totalDeductions + $bonus - $deduction;
 
+    // Calculate gross salary (total allowances)
+    $grossSalary = $totalAllowances;
+
+    // Calculate net salary (gross salary - total deductions)
+    $netSalary = $grossSalary - $totalDeductions;
+
     return response()->json([
+      'salary_id' => $salary->id,
+      'gross_salary' => number_format($grossSalary, 2, '.', ''),
+      'net_salary' => number_format($netSalary, 2, '.', ''),
       'generated_salary' => number_format($generatedSalary, 2, '.', ''),
       'attendance_summary' => $summary,
       'late_deduction' => number_format($lateDeduction, 2, '.', ''),
@@ -462,6 +503,14 @@ class PayrollController extends Controller
     $payroll->approved_at = now();
     $payroll->updated_by = Auth::user()->id;
     $payroll->save();
+
+    // Lock attendance for this month when payroll is approved
+    $attendanceMonth = \App\Models\AttendanceMonth::where('user_id', $payroll->user_id)
+                                                  ->where('attendance_month', $payroll->payroll_month)
+                                                  ->first();
+    if ($attendanceMonth) {
+      $attendanceMonth->lock();
+    }
 
     $message = "Payroll approved successfully";
     return redirect()->route('payrolls.index')->with('flash_success', $message);

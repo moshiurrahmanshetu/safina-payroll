@@ -755,16 +755,132 @@
               <i class="nav-icon icon-list"></i>Salary Structures List</a>
           </li>
           @endif
-          @if(checkMenuActive('AttendanceController@create', $menu_list))
+          @if(checkMenuActive('SalaryRevisionController@create', $menu_list))
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('attendances.create') }}">
-              <i class="nav-icon icon-note"></i>Add Attendance</a>
+            <a class="nav-link" href="{{ route('salary_revisions.create') }}">
+              <i class="nav-icon icon-note"></i>New Salary Revision</a>
+          </li>
+          @endif
+          @if(checkMenuActive('SalaryRevisionController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('salary_revisions.index') }}">
+              <i class="nav-icon icon-list"></i>Salary Revisions List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('SalaryController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('salaries.index') }}">
+              <i class="nav-icon icon-clock"></i>Salary History</a>
+          </li>
+          @endif
+          @if(checkMenuActive('SalaryDisbursementController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('salary_disbursements.index') }}">
+              <i class="nav-icon icon-wallet"></i>Salary Disbursements</a>
+          </li>
+          @endif
+          @if(checkMenuActive('AttendanceController@daily', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('attendances.daily') }}">
+              <i class="nav-icon icon-note"></i>Daily Attendance Entry</a>
+          </li>
+          @endif
+          @if(checkMenuActive('AttendanceController@bulk', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('attendances.bulk') }}">
+              <i class="nav-icon icon-grid"></i>Bulk Attendance Editor</a>
           </li>
           @endif
           @if(checkMenuActive('AttendanceController@index', $menu_list))
           <li class="nav-item">
             <a class="nav-link" href="{{ route('attendances.index') }}">
               <i class="nav-icon icon-list"></i>Attendance List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('ShiftController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('shifts.index') }}">
+              <i class="nav-icon icon-clock"></i>Shift Management</a>
+          </li>
+          @endif
+          @if(checkMenuActive('EmployeeShiftController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('employee_shifts.index') }}">
+              <i class="nav-icon icon-user"></i>Employee Shift Assignment</a>
+          </li>
+          @endif
+          @if(checkMenuActive('FingerprintLogController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('fingerprint_logs.index') }}">
+              <i class="nav-icon icon-fingerprint"></i>Fingerprint Logs</a>
+          </li>
+          @endif
+          @if(checkMenuActive('FingerprintSessionController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('fingerprint_sessions.index') }}">
+              <i class="nav-icon icon-clock"></i>Fingerprint Sessions</a>
+          </li>
+          @endif
+          @if(checkMenuActive('FingerprintAttendanceController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('fingerprint_attendance.index') }}">
+              <i class="nav-icon icon-calculator"></i>Generate Attendance</a>
+          </li>
+          @endif
+          @if(checkMenuActive('DailyAttendanceController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('daily_attendance.index') }}">
+              <i class="nav-icon icon-calendar"></i>Daily Attendance</a>
+          </li>
+          @endif
+          @if(checkMenuActive(['AttendanceReportController@index','AttendanceReportController@employeeDaily','AttendanceReportController@employeeMonthly','AttendanceReportController@dailyRegister','AttendanceReportController@monthlyRegister','AttendanceReportController@lateReport','AttendanceReportController@departmentReport','AttendanceReportController@shiftReport'], $menu_list))
+          <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+              <i class="nav-icon icon-chart"></i>Attendance Reports</a>
+            <ul class="nav-dropdown-items">
+              @if(checkMenuActive('AttendanceReportController@employeeDaily', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.employee_daily') }}">
+                  <i class="nav-icon icon-user"></i>Employee Daily</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@employeeMonthly', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.employee_monthly') }}">
+                  <i class="nav-icon icon-calendar"></i>Employee Monthly</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@dailyRegister', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.daily_register') }}">
+                  <i class="nav-icon icon-users"></i>Daily Register</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@monthlyRegister', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.monthly_register') }}">
+                  <i class="nav-icon icon-calendar-check-o"></i>Monthly Register</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@lateReport', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.late_report') }}">
+                  <i class="nav-icon icon-clock-o"></i>Late Report</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@departmentReport', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.department_report') }}">
+                  <i class="nav-icon icon-building"></i>Department Report</a>
+              </li>
+              @endif
+              @if(checkMenuActive('AttendanceReportController@shiftReport', $menu_list))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('attendance_reports.shift_report') }}">
+                  <i class="nav-icon icon-clock"></i>Shift Report</a>
+              </li>
+              @endif
+            </ul>
           </li>
           @endif
           @if(checkMenuActive('PayrollController@create', $menu_list))

@@ -13,24 +13,17 @@
       <div class="panel-body">
         <div class="form-group">
           <label class="control-label">Employee *</label>
-          <select name="user_id" class="form-control" id="user_id" required onchange="loadSalaryStructure(); calculateGeneratedSalary();">
+          <select name="user_id" class="form-control" id="user_id" required onchange="calculateGeneratedSalary();">
             <option value="">Select Employee</option>
             @if($users->count() > 0)
               @foreach($users as $id => $name)
                 <option value="{{ $id }}">{{ $name }}</option>
               @endforeach
             @else
-              <option value="" disabled>No eligible employees found (users with salary_processing=1 and salary structure)</option>
+              <option value="" disabled>No eligible employees found (users with salary_processing=1 and current salary)</option>
             @endif
           </select>
           {!! $errors->first('user_id', '<p class="text-danger">:message</p>') !!}
-        </div>
-        <div class="form-group">
-          <label class="control-label">Salary Structure *</label>
-          <select name="salary_structure_id" class="form-control" id="salary_structure_id" required onchange="calculateGeneratedSalary();">
-            <option value="">Select Employee First</option>
-          </select>
-          {!! $errors->first('salary_structure_id', '<p class="text-danger">:message</p>') !!}
         </div>
       </div>
     </div>
@@ -195,53 +188,15 @@
 @endsection
 @section('script')
 <script>
-function loadSalaryStructure() {
-  var userId = document.getElementById('user_id').value;
-  var salaryStructureSelect = document.getElementById('salary_structure_id');
-
-  if (userId) {
-    // AJAX call to get salary structure for selected user
-    var baseUrl = "{{ url('admin/payrolls/get-salary-structure') }}" + '/' + userId;
-    fetch(baseUrl)
-      .then(response => response.json())
-      .then(data => {
-        salaryStructureSelect.innerHTML = '<option value="">Select Salary Structure</option>';
-        if (data.salary_structures && data.salary_structures.length > 0) {
-          data.salary_structures.forEach(function(structure) {
-            var option = document.createElement('option');
-            option.value = structure.id;
-            option.text = 'ID: ' + structure.id + ' - Basic: ' + structure.basic_salary;
-            salaryStructureSelect.appendChild(option);
-          });
-          // Auto-select first structure
-          if (data.salary_structures.length > 0) {
-            salaryStructureSelect.value = data.salary_structures[0].id;
-          }
-        } else {
-          var option = document.createElement('option');
-          option.value = '';
-          option.text = 'No salary structure found';
-          option.disabled = true;
-          salaryStructureSelect.appendChild(option);
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  } else {
-    salaryStructureSelect.innerHTML = '<option value="">Select Employee First</option>';
-  }
-}
-
 function calculateGeneratedSalary() {
   var userId = document.getElementById('user_id').value;
-  var salaryStructureId = document.getElementById('salary_structure_id').value;
   var payrollMonth = document.getElementById('payroll_month').value;
   var bonus = document.getElementById('bonus').value;
   var deduction = document.getElementById('deduction').value;
 
-  if (userId && salaryStructureId && payrollMonth) {
+  if (userId && payrollMonth) {
     var formData = new FormData();
     formData.append('user_id', userId);
-    formData.append('salary_structure_id', salaryStructureId);
     formData.append('payroll_month', payrollMonth);
     formData.append('bonus', bonus || 0);
     formData.append('deduction', deduction || 0);

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SalaryStructure;
+use App\Models\Salary;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
@@ -108,6 +109,40 @@ class SalaryStructureController extends Controller
     $salary_structure = SalaryStructure::create($data);
 
     if ($salary_structure) {
+      // Sync with salaries table - create new salary revision
+      // Set previous current salary is_current = 0
+      Salary::where('user_id', $data['user_id'])
+            ->where('is_current', 1)
+            ->update(['is_current' => 0]);
+
+      // Create new salary record with same data
+      $salary = new Salary();
+      $salary->user_id = $data['user_id'];
+      $salary->basic_salary = $data['basic_salary'] ?? 0;
+      $salary->house_rent = $data['house_rent'] ?? 0;
+      $salary->medical = $data['medical'] ?? 0;
+      $salary->transport = $data['transport'] ?? 0;
+      $salary->food = $data['food'] ?? 0;
+      $salary->mobile = $data['mobile'] ?? 0;
+      $salary->other_allowance = $data['other_allowance'] ?? 0;
+      $salary->festival_bonus = $data['festival_bonus'] ?? 0;
+      $salary->late_fine = $data['late_fine'] ?? 0;
+      $salary->absent_deduction = $data['absent_deduction'] ?? 0;
+      $salary->advance_salary = $data['advance_salary'] ?? 0;
+      $salary->tax = $data['tax'] ?? 0;
+      $salary->pf = $data['pf'] ?? 0;
+      $salary->other_deduction = $data['other_deduction'] ?? 0;
+      $salary->effective_from = now()->format('Y-m-d');
+      $salary->salary_increment_reason = 'Salary Structure Update';
+      $salary->remarks = 'Synced from salary_structures';
+      $salary->is_current = 1;
+      $salary->revision_locked = 0;
+      $salary->salary_locked = 0;
+      $salary->status = $data['status'];
+      $salary->created_by = $user_id;
+      $salary->updated_by = $user_id;
+      $salary->save();
+
       $message = "You have successfully created";
       return redirect()->route('salary_structures.index')->with('flash_success', $message);
     } else {
@@ -196,6 +231,40 @@ class SalaryStructureController extends Controller
     $salary_structure = SalaryStructure::where('id', $id)->update($data);
 
     if ($salary_structure) {
+      // Sync with salaries table - create new salary revision
+      // Set previous current salary is_current = 0
+      Salary::where('user_id', $data['user_id'])
+            ->where('is_current', 1)
+            ->update(['is_current' => 0]);
+
+      // Create new salary record with same data
+      $salary = new Salary();
+      $salary->user_id = $data['user_id'];
+      $salary->basic_salary = $data['basic_salary'] ?? 0;
+      $salary->house_rent = $data['house_rent'] ?? 0;
+      $salary->medical = $data['medical'] ?? 0;
+      $salary->transport = $data['transport'] ?? 0;
+      $salary->food = $data['food'] ?? 0;
+      $salary->mobile = $data['mobile'] ?? 0;
+      $salary->other_allowance = $data['other_allowance'] ?? 0;
+      $salary->festival_bonus = $data['festival_bonus'] ?? 0;
+      $salary->late_fine = $data['late_fine'] ?? 0;
+      $salary->absent_deduction = $data['absent_deduction'] ?? 0;
+      $salary->advance_salary = $data['advance_salary'] ?? 0;
+      $salary->tax = $data['tax'] ?? 0;
+      $salary->pf = $data['pf'] ?? 0;
+      $salary->other_deduction = $data['other_deduction'] ?? 0;
+      $salary->effective_from = now()->format('Y-m-d');
+      $salary->salary_increment_reason = 'Salary Structure Update';
+      $salary->remarks = 'Synced from salary_structures';
+      $salary->is_current = 1;
+      $salary->revision_locked = 0;
+      $salary->salary_locked = 0;
+      $salary->status = $data['status'];
+      $salary->created_by = $user_id;
+      $salary->updated_by = $user_id;
+      $salary->save();
+
       $message = "You have successfully Updated";
       return redirect()->back()->with('flash_success', $message);
     } else {

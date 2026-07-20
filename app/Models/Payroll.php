@@ -7,6 +7,27 @@ class Payroll extends Model
 {
     public $timestamps = true;
     protected $guarded = array('id');
+    protected $fillable = [
+        'user_id',
+        'salary_id',
+        'payroll_month',
+        'generated_salary',
+        'attendance_adjustment',
+        'bonus',
+        'deduction',
+        'net_salary',
+        'status',
+        'remarks',
+        'approval_status',
+        'submitted_at',
+        'approved_at',
+        'approved_by',
+        'returned_at',
+        'returned_by',
+        'approval_remark',
+        'created_by',
+        'updated_by',
+    ];
 
     protected $casts = [
         'generated_salary' => 'decimal:2',
@@ -30,6 +51,16 @@ class Payroll extends Model
         return $this->belongsTo(SalaryStructure::class);
     }
 
+    public function salary()
+    {
+        return $this->belongsTo(Salary::class);
+    }
+
+    public function attendanceMonth()
+    {
+        return $this->belongsTo(AttendanceMonth::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -48,5 +79,41 @@ class Payroll extends Model
     public function returner()
     {
         return $this->belongsTo(User::class, 'returned_by');
+    }
+
+    public function disbursement()
+    {
+        return $this->hasOne(SalaryDisbursement::class);
+    }
+
+    /**
+     * Get payment status attribute
+     */
+    public function getPaymentStatusAttribute()
+    {
+        if ($this->disbursement) {
+            return $this->disbursement->payment_status;
+        }
+        
+        // If approval_status is 'Paid', return 'Paid'
+        if ($this->approval_status === 'Paid') {
+            return 'Paid';
+        }
+        
+        // If approved but no disbursement, return 'Pending'
+        if ($this->approval_status === 'approved') {
+            return 'Pending';
+        }
+        
+        // Otherwise return the approval status
+        return $this->approval_status;
+    }
+
+    /**
+     * Check if payroll is paid
+     */
+    public function isPaid()
+    {
+        return $this->approval_status === 'Paid' || ($this->disbursement && $this->disbursement->isPaid());
     }
 }

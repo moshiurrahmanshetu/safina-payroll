@@ -74,7 +74,16 @@ use App\Http\Controllers\DailyWorkerController;
 use App\Http\Controllers\ContractWorkerController;
 use App\Http\Controllers\SalaryStructureController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SalaryDisbursementController;
+use App\Http\Controllers\SalaryRevisionController;
+use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\DailyAttendanceController;
+use App\Http\Controllers\EmployeeShiftController;
+use App\Http\Controllers\FingerprintLogController;
+use App\Http\Controllers\FingerprintSessionController;
+use App\Http\Controllers\FingerprintAttendanceController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -321,6 +330,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::resource('contract_workers', ContractWorkerController::class);
   Route::get('/contract_workers/get_user_details/{id}', [ContractWorkerController::class, 'getUserDetails'])->name('contract_workers.get_user_details');
   Route::resource('salary_structures', SalaryStructureController::class);
+  Route::resource('salaries', SalaryController::class);
+  Route::get('/salaries/timeline/{user_id}', [SalaryController::class, 'timeline'])->name('salaries.timeline');
+  Route::get('/salaries/{id}/lock', [SalaryController::class, 'lock'])->name('salaries.lock');
+  Route::get('/salaries/{id}/unlock', [SalaryController::class, 'unlock'])->name('salaries.unlock');
+  Route::resource('salary_revisions', SalaryRevisionController::class);
+  Route::get('/salary_revisions/{id}/lock', [SalaryRevisionController::class, 'lock'])->name('salary_revisions.lock');
+  Route::get('/salary_revisions/{id}/unlock', [SalaryRevisionController::class, 'unlock'])->name('salary_revisions.unlock');
+  Route::get('/api/salaries/current/{userId}', [SalaryRevisionController::class, 'getCurrentSalary'])->name('api.salaries.current');
   Route::get('/payrolls/approval', [PayrollController::class, 'approval'])->name('payrolls.approval');
   Route::get('/payrolls/approved', [PayrollController::class, 'approved'])->name('payrolls.approved');
   Route::resource('payrolls', PayrollController::class);
@@ -330,6 +347,48 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/payrolls/{id}/submit', [PayrollController::class, 'submit'])->name('payrolls.submit');
   Route::get('/payrolls/{id}/approve', [PayrollController::class, 'approve'])->name('payrolls.approve');
   Route::post('/payrolls/{id}/return', [PayrollController::class, 'returnPayroll'])->name('payrolls.return');
+  Route::resource('salary_disbursements', SalaryDisbursementController::class);
+  Route::post('/salary_disbursements/process-payment', [SalaryDisbursementController::class, 'processPayment'])->name('salary_disbursements.process_payment');
+  Route::get('/salary_disbursements/{id}/payslip', [SalaryDisbursementController::class, 'payslip'])->name('salary_disbursements.payslip');
+  Route::get('/salary_disbursements/{id}/cancel', [SalaryDisbursementController::class, 'cancel'])->name('salary_disbursements.cancel');
+  Route::get('/salary_disbursements/reports/payment-register', [SalaryDisbursementController::class, 'paymentRegister'])->name('salary_disbursements.payment_register');
+  Route::get('/salary_disbursements/reports/cash-payment', [SalaryDisbursementController::class, 'cashPaymentReport'])->name('salary_disbursements.cash_payment');
+  Route::resource('shifts', ShiftController::class);
+  Route::resource('employee_shifts', EmployeeShiftController::class);
+  Route::resource('fingerprint_logs', FingerprintLogController::class);
+  Route::resource('fingerprint_sessions', FingerprintSessionController::class);
+  Route::post('/fingerprint_sessions/process', [FingerprintSessionController::class, 'process'])->name('fingerprint_sessions.process');
+  Route::get('/fingerprint_attendance', [FingerprintAttendanceController::class, 'index'])->name('fingerprint_attendance.index');
+  Route::post('/fingerprint_attendance/generate', [FingerprintAttendanceController::class, 'generate'])->name('fingerprint_attendance.generate');
+  Route::get('/fingerprint_attendance/history', [FingerprintAttendanceController::class, 'history'])->name('fingerprint_attendance.history');
+  Route::get('/daily-attendance', [DailyAttendanceController::class, 'index'])->name('daily_attendance.index');
+  Route::post('/daily-attendance/save', [DailyAttendanceController::class, 'save'])->name('daily_attendance.save');
+  Route::post('/daily-attendance/load', [DailyAttendanceController::class, 'load'])->name('daily_attendance.load');
+  Route::post('/daily-attendance/calculate', [DailyAttendanceController::class, 'calculate'])->name('daily_attendance.calculate');
+  Route::post('/daily-attendance/store', [DailyAttendanceController::class, 'store'])->name('daily_attendance.store');
+  Route::post('/daily-attendance/load-day', [DailyAttendanceController::class, 'loadDay'])->name('daily_attendance.load_day');
+  Route::post('/daily-attendance/get-assigned-shift', [DailyAttendanceController::class, 'getAssignedShift'])->name('daily_attendance.get_assigned_shift');
+  
+  // Attendance Reports
+  Route::get('/attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance_reports.index');
+  Route::get('/attendance-reports/employee-daily', [AttendanceReportController::class, 'employeeDaily'])->name('attendance_reports.employee_daily');
+  Route::get('/attendance-reports/employee-monthly', [AttendanceReportController::class, 'employeeMonthly'])->name('attendance_reports.employee_monthly');
+  Route::get('/attendance-reports/daily-register', [AttendanceReportController::class, 'dailyRegister'])->name('attendance_reports.daily_register');
+  Route::get('/attendance-reports/monthly-register', [AttendanceReportController::class, 'monthlyRegister'])->name('attendance_reports.monthly_register');
+  Route::get('/attendance-reports/late-report', [AttendanceReportController::class, 'lateReport'])->name('attendance_reports.late_report');
+  Route::get('/attendance-reports/department-report', [AttendanceReportController::class, 'departmentReport'])->name('attendance_reports.department_report');
+  Route::get('/attendance-reports/shift-report', [AttendanceReportController::class, 'shiftReport'])->name('attendance_reports.shift_report');
+  Route::get('/salary_disbursements/reports/bank-payment', [SalaryDisbursementController::class, 'bankPaymentReport'])->name('salary_disbursements.bank_payment');
+  Route::get('/salary_disbursements/reports/monthly-register', [SalaryDisbursementController::class, 'monthlySalaryRegister'])->name('salary_disbursements.monthly_register');
+  Route::get('/attendances/daily', [AttendanceController::class, 'daily'])->name('attendances.daily');
+  Route::post('/attendances/daily-store', [AttendanceController::class, 'dailyStore'])->name('attendances.daily_store');
+  Route::post('/attendances/load-day', [AttendanceController::class, 'loadDay'])->name('attendances.load_day');
+  Route::get('/attendances/bulk', [AttendanceController::class, 'bulk'])->name('attendances.bulk');
+  Route::post('/attendances/bulk-store', [AttendanceController::class, 'bulkStore'])->name('attendances.bulk_store');
+  Route::post('/attendances/load-month', [AttendanceController::class, 'loadMonth'])->name('attendances.load_month');
+  Route::post('/attendances/{id}/update-day', [AttendanceController::class, 'updateDay'])->name('attendances.update_day');
+  Route::get('/attendances/{id}/lock', [AttendanceController::class, 'lock'])->name('attendances.lock');
+  Route::get('/attendances/{id}/unlock', [AttendanceController::class, 'unlock'])->name('attendances.unlock');
   Route::resource('attendances', AttendanceController::class);
 
 

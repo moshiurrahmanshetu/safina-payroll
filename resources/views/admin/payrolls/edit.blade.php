@@ -17,9 +17,9 @@
           {{ Form::hidden('user_id') }}
         </div>
         <div class="form-group">
-          <label class="control-label">Salary Structure *</label>
-          <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? 'ID: ' . $payroll->salaryStructure->id . ' - Basic: ' . $payroll->salaryStructure->basic_salary : 'N/A' }}" readonly>
-          {{ Form::hidden('salary_structure_id') }}
+          <label class="control-label">Current Salary *</label>
+          <input type="text" class="form-control" value="{{ $payroll->salary ? 'ID: ' . $payroll->salary->id . ' - Basic: ' . $payroll->salary->basic_salary : 'N/A' }}" readonly>
+          {{ Form::hidden('salary_id') }}
         </div>
       </div>
     </div>
@@ -186,15 +186,13 @@
 <script>
 function calculateGeneratedSalary() {
   var userId = "{{ $payroll->user_id }}";
-  var salaryStructureId = "{{ $payroll->salary_structure_id }}";
   var payrollMonth = document.getElementById('payroll_month').value;
   var bonus = document.getElementById('bonus').value;
   var deduction = document.getElementById('deduction').value;
 
-  if (userId && salaryStructureId && payrollMonth) {
+  if (userId && payrollMonth) {
     var formData = new FormData();
     formData.append('user_id', userId);
-    formData.append('salary_structure_id', salaryStructureId);
     formData.append('payroll_month', payrollMonth);
     formData.append('bonus', bonus || 0);
     formData.append('deduction', deduction || 0);

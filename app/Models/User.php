@@ -45,6 +45,10 @@ class User extends Authenticatable
     return $this->belongsTo(Department::class);
   }
 
+  public function shift(){
+    return $this->belongsTo(Shift::class);
+  }
+
   public function gates(){
     return $this->belongsToMany(Gate::class, 'user_gates', 'user_id', 'gate_id');
   }

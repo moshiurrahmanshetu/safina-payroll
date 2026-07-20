@@ -62,6 +62,7 @@
             <th>Deduction</th>
             <th>Net Salary</th>
             <th>Approval Status</th>
+            <th>Payment Status</th>
             <th>Current Holder</th>
             <th>Action</th>
           </tr>
@@ -87,6 +88,19 @@
               <strong class="badge badge-{{config('myhelpers.approval_status_color.returned')}}">{{config('myhelpers.approval_status.returned')}}</strong>
             @elseif($data->approval_status == 'approved')
               <strong class="badge badge-{{config('myhelpers.approval_status_color.approved')}}">{{config('myhelpers.approval_status.approved')}}</strong>
+            @elseif($data->approval_status == 'Paid')
+              <strong class="badge badge-success">Paid</strong>
+            @endif
+          </td>
+          <td>
+            @if($data->payment_status == 'Paid')
+              <span class="badge badge-success">Paid</span>
+            @elseif($data->payment_status == 'Pending')
+              <span class="badge badge-warning">Pending</span>
+            @elseif($data->payment_status == 'Cancelled')
+              <span class="badge badge-danger">Cancelled</span>
+            @else
+              <span class="badge badge-secondary">{{ $data->payment_status }}</span>
             @endif
           </td>
           <td>
@@ -113,6 +127,8 @@
              @if($data->approval_remark)
                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#remarkModal{{$data->id}}"><i class="nav-icon icon-info"></i></button>
              @endif
+           @elseif($data->approval_status == 'approved' && !$data->isPaid())
+             <a href="{{ route('salary_disbursements.create') }}?payroll_id={{ $data->id }}" class="btn btn-primary"><i class="nav-icon icon-wallet"></i> Pay Salary</a>
            @endif
            <a href="{{ route('payrolls.show', $data->id) }}" class="btn btn-info"><i class="nav-icon icon-eye"></i></a>
          </td>

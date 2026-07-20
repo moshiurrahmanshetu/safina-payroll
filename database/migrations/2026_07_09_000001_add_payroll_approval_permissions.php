@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class AddPayrollApprovalPermissions extends Migration
 {
@@ -18,25 +19,25 @@ class AddPayrollApprovalPermissions extends Migration
 
         if ($payrollControllerId) {
             // Add submit permission
-            DB::table('permissions')->insert([
+            DB::table('permissions')->updateOrInsert([
                 'name' => 'submit',
                 'parent_id' => $payrollControllerId
             ]);
 
             // Add approve permission
-            DB::table('permissions')->insert([
+            DB::table('permissions')->updateOrInsert([
                 'name' => 'approve',
                 'parent_id' => $payrollControllerId
             ]);
 
             // Add returnPayroll permission
-            DB::table('permissions')->insert([
+            DB::table('permissions')->updateOrInsert([
                 'name' => 'returnPayroll',
                 'parent_id' => $payrollControllerId
             ]);
 
             // Add show permission (for detail view)
-            DB::table('permissions')->insert([
+            DB::table('permissions')->updateOrInsert([
                 'name' => 'show',
                 'parent_id' => $payrollControllerId
             ]);
