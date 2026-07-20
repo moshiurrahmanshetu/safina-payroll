@@ -1,0 +1,158 @@
+@extends('admin.attendance_reports.print.layout')
+
+@section('title', 'Employee Daily Attendance Report - Print')
+
+@section('report_title', 'Employee Daily Attendance Report')
+@section('report_subtitle', 'Daily Attendance Details')
+
+@section('content')
+<div class="text-center mb-4">
+    <h2>{{ $companyName }}</h2>
+    <h3>{{ $reportTitle }}</h3>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <tr>
+                <td><strong>Employee Name:</strong></td>
+                <td>{{ $employee->name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Employee ID:</strong></td>
+                <td>{{ $employee->employee_id ?? $employee->id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Department:</strong></td>
+                <td>{{ $employee->department->name ?? 'N/A' }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <tr>
+                <td><strong>Designation:</strong></td>
+                <td>{{ $employee->designation->name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Assigned Shift:</strong></td>
+                <td>{{ $attendanceMonthRecord->shift->name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Attendance Date:</strong></td>
+                <td>{{ $attendanceDate }}</td>
+            </tr>
+            <tr>
+                <td><strong>Day Name:</strong></td>
+                <td>{{ \Carbon\Carbon::parse($attendanceDate)->format('l') }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Attendance Details</h4>
+        @if($dayData)
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Check In</th>
+                    <th class="text-center">Check Out</th>
+                    <th class="text-center">Late Minutes</th>
+                    <th class="text-center">Worked Minutes</th>
+                    <th>System Remark</th>
+                    <th>HR Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="page-break-inside: avoid;">
+                    <td class="text-center">
+                        @php
+                            $status = $dayData['status'] ?? '';
+                        @endphp
+                        @if($status)
+                            @if($status == 'Present')
+                                <span style="color: green; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Late')
+                                <span style="color: orange; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Half Day')
+                                <span style="color: #17a2b8; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Absent')
+                                <span style="color: red; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Leave')
+                                <span style="color: #007bff; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Holiday')
+                                <span style="color: #9b59b6; font-weight: bold;">{{ $status }}</span>
+                            @elseif($status == 'Weekly Off')
+                                <span style="color: gray; font-weight: bold;">{{ $status }}</span>
+                            @else
+                                <span style="color: gray;">{{ $status }}</span>
+                            @endif
+                        @else
+                            <span style="color: gray;">-</span>
+                        @endif
+                    </td>
+                    <td class="text-center">{{ $dayData['check_in'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['check_out'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['late_minutes'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['worked_minutes'] ?? '-' }}</td>
+                    <td>{{ $dayData['system_remark'] ?? '-' }}</td>
+                    <td>{{ $dayData['remarks'] ?? '-' }}</td>
+                </tr>
+            </tbody>
+        </table>
+        @else
+        <div class="alert alert-warning" style="text-align: center;">
+            <strong>No Attendance Found</strong> for the selected date.
+        </div>
+        @endif
+    </div>
+</div>
+
+<div class="row mt-4" style="page-break-inside: avoid;">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <tr>
+                <td><strong>Generated By:</strong> {{ $generatedBy ?? 'System' }}</td>
+                <td><strong>Generated Date:</strong> {{ $generatedDate ?? '-' }}</td>
+                <td><strong>Printed Date:</strong> {{ $printedDate ?? '-' }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="row mt-4" style="page-break-inside: avoid;">
+    <div class="col-md-12">
+        <table class="table table-bordered">
+            <tr>
+                <td style="width: 33%;">
+                    <strong>Prepared By:</strong>
+                    <br><br><br>
+                    __________________
+                    <br><br>
+                </td>
+                <td style="width: 33%;">
+                    <strong>Checked By:</strong>
+                    <br><br><br>
+                    __________________
+                    <br><br>
+                </td>
+                <td style="width: 34%;">
+                    <strong>Approved By:</strong>
+                    <br><br><br>
+                    __________________
+                    <br><br>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        window.print();
+    };
+</script>
+@endsection

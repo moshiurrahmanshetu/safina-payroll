@@ -1,96 +1,206 @@
-@extends('adminlte::page')
+@extends('layouts.admin')
 
 @section('title', 'Daily Attendance Register')
-
-@section('content_header')
-    <h1>Daily Attendance Register</h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ url('/admin/home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="{{ route('attendance_reports.index') }}">Attendance Reports</a></li>
-        <li class="active">Daily Attendance Register</li>
-    </ol>
-@stop
-
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Filter Panel</h3>
-                </div>
-                <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Date</label>
-                                <input type="date" class="form-control" id="report_date">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Department (Optional)</label>
-                                <select class="form-control" id="department_id">
-                                    <option value="">-- All Departments --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Shift (Optional)</label>
-                                <select class="form-control" id="shift_id">
-                                    <option value="">-- All Shifts --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Status (Optional)</label>
-                                <select class="form-control" id="status">
-                                    <option value="">-- All Status --</option>
-                                    <option value="Present">Present</option>
-                                    <option value="Late">Late</option>
-                                    <option value="Half Day">Half Day</option>
-                                    <option value="Absent">Absent</option>
-                                    <option value="Leave">Leave</option>
-                                    <option value="Holiday">Holiday</option>
-                                    <option value="Weekly Off">Weekly Off</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" id="generateBtn">
-                                    <i class="fa fa-file-text"></i> Generate Report
-                                </button>
-                                <button type="button" class="btn btn-default" id="printBtn" disabled>
-                                    <i class="fa fa-print"></i> Print
-                                </button>
-                                <button type="button" class="btn btn-default" id="pdfBtn" disabled>
-                                    <i class="fa fa-file-pdf"></i> Export PDF
-                                </button>
-                                <button type="button" class="btn btn-default" id="excelBtn" disabled>
-                                    <i class="fa fa-file-excel"></i> Export Excel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<h3 class="page-header">Daily Attendance Register {{link_to_route('attendance_reports.index','Attendance Reports',[],array('class'=>'btn btn-success pull-right'))}}</h3>
 
-    <div class="row" id="reportSection" style="display: none;">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Report Output</h3>
-                </div>
-                <div class="box-body">
-                    <p>Report will be displayed here after generation.</p>
-                </div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Filter Panel</h4>
+      </div>
+      <div class="panel-body">
+        <form method="GET" action="{{ route('attendance_reports.daily_register') }}">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Attendance Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" name="attendance_date" value="{{ request('attendance_date') }}" required>
+              </div>
             </div>
-        </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Department (Optional)</label>
+                <select class="form-control" name="department_id">
+                  <option value="">-- All Departments --</option>
+                  @foreach($departments as $department)
+                    <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                      {{ $department->name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Shift (Optional)</label>
+                <select class="form-control" name="shift_id">
+                  <option value="">-- All Shifts --</option>
+                  @foreach($shifts as $shift)
+                    <option value="{{ $shift->id }}" {{ request('shift_id') == $shift->id ? 'selected' : '' }}>
+                      {{ $shift->name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Status (Optional)</label>
+                <select class="form-control" name="status">
+                  <option value="">-- All Status --</option>
+                  @foreach($statuses as $key => $value)
+                    <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>
+                      {{ $value }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa fa-file-text"></i> Generate Report
+                </button>
+                @if(isset($attendanceDate))
+                <a href="{{ route('attendance_reports.daily_register_print', ['attendance_date' => $attendanceDate, 'department_id' => request('department_id'), 'shift_id' => request('shift_id'), 'status' => request('status')]) }}" target="_blank" class="btn btn-default">
+                  <i class="fa fa-print"></i> Print
+                </a>
+                @endif
+                <button type="button" class="btn btn-default" disabled>
+                  <i class="fa fa-file-pdf"></i> Export PDF
+                </button>
+                <button type="button" class="btn btn-default" disabled>
+                  <i class="fa fa-file-excel"></i> Export Excel
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-@stop
+  </div>
+</div>
+
+@if(isset($attendanceDate))
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Report Output</h4>
+      </div>
+      <div class="panel-body">
+        <div class="text-center mb-4">
+          <h2>{{ $companyName }}</h2>
+          @if($companyAddress)
+          <p>{{ $companyAddress }}</p>
+          @endif
+          <h3>{{ $reportTitle }}</h3>
+          <p><strong>Attendance Date:</strong> {{ $attendanceDate }}</p>
+          @if(request('department_id'))
+          @php $selectedDept = $departments->firstWhere('id', request('department_id')); @endphp
+          <p><strong>Department:</strong> {{ $selectedDept ? $selectedDept->name : 'All Departments' }}</p>
+          @endif
+          @if(request('shift_id'))
+          @php $selectedShift = $shifts->firstWhere('id', request('shift_id')); @endphp
+          <p><strong>Shift:</strong> {{ $selectedShift ? $selectedShift->name : 'All Shifts' }}</p>
+          @endif
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            @if(count($attendanceData) > 0)
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width: 50px;">SL</th>
+                    <th class="text-center">Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Assigned Shift</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Check In</th>
+                    <th class="text-center">Check Out</th>
+                    <th class="text-center">Late Minutes</th>
+                    <th class="text-center">Worked Minutes</th>
+                    <th>System Remark</th>
+                    <th>HR Remark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($attendanceData as $index => $data)
+                  @php
+                    $employee = $data['employee'];
+                    $dayData = $data['dayData'];
+                    $status = $dayData['status'] ?? '';
+                  @endphp
+                  <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $employee->employee_id ?? $employee->id }}</td>
+                    <td>{{ $employee->name }}</td>
+                    <td>{{ $employee->department->name ?? 'N/A' }}</td>
+                    <td>{{ $employee->designation->name ?? 'N/A' }}</td>
+                    <td>{{ $employee->shift->name ?? 'N/A' }}</td>
+                    <td class="text-center">
+                      @if($status)
+                        @if($status == 'Present')
+                          <span class="badge badge-success">{{ $status }}</span>
+                        @elseif($status == 'Late')
+                          <span class="badge badge-warning">{{ $status }}</span>
+                        @elseif($status == 'Half Day')
+                          <span class="badge badge-info">{{ $status }}</span>
+                        @elseif($status == 'Absent')
+                          <span class="badge badge-danger">{{ $status }}</span>
+                        @elseif($status == 'Leave')
+                          <span class="badge badge-primary">{{ $status }}</span>
+                        @elseif($status == 'Holiday')
+                          <span class="badge" style="background-color: #9b59b6;">{{ $status }}</span>
+                        @elseif($status == 'Weekly Off')
+                          <span class="badge badge-default">{{ $status }}</span>
+                        @else
+                          <span class="badge badge-default">{{ $status }}</span>
+                        @endif
+                      @else
+                        <span class="badge badge-default">-</span>
+                      @endif
+                    </td>
+                    <td class="text-center">{{ $dayData['check_in'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['check_out'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['late_minutes'] ?? '-' }}</td>
+                    <td class="text-center">{{ $dayData['worked_minutes'] ?? '-' }}</td>
+                    <td>{{ $dayData['system_remark'] ?? '-' }}</td>
+                    <td>{{ $dayData['remarks'] ?? '-' }}</td>
+                  </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            @else
+            <div class="alert alert-warning">
+              <strong>No Attendance Found</strong> for the selected criteria.
+            </div>
+            @endif
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <table class="table table-bordered">
+              <tr>
+                <td><strong>Generated By:</strong> {{ $generatedBy ?? 'System' }}</td>
+                <td><strong>Generated Date:</strong> {{ $generatedDate ?? '-' }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+@endsection

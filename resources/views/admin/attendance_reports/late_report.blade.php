@@ -1,87 +1,85 @@
-@extends('adminlte::page')
+@extends('layouts.admin')
 
 @section('title', 'Late Attendance Report')
-
-@section('content_header')
-    <h1>Late Attendance Report</h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ url('/admin/home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="{{ route('attendance_reports.index') }}">Attendance Reports</a></li>
-        <li class="active">Late Attendance Report</li>
-    </ol>
-@stop
-
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Filter Panel</h3>
-                </div>
-                <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>From Date</label>
-                                <input type="date" class="form-control" id="from_date">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>To Date</label>
-                                <input type="date" class="form-control" id="to_date">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Department (Optional)</label>
-                                <select class="form-control" id="department_id">
-                                    <option value="">-- All Departments --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Employee (Optional)</label>
-                                <select class="form-control" id="employee_id">
-                                    <option value="">-- All Employees --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" id="generateBtn">
-                                    <i class="fa fa-file-text"></i> Generate Report
-                                </button>
-                                <button type="button" class="btn btn-default" id="printBtn" disabled>
-                                    <i class="fa fa-print"></i> Print
-                                </button>
-                                <button type="button" class="btn btn-default" id="pdfBtn" disabled>
-                                    <i class="fa fa-file-pdf"></i> Export PDF
-                                </button>
-                                <button type="button" class="btn btn-default" id="excelBtn" disabled>
-                                    <i class="fa fa-file-excel"></i> Export Excel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<h3 class="page-header">Late Attendance Report {{link_to_route('attendance_reports.index','Attendance Reports',[],array('class'=>'btn btn-success pull-right'))}}</h3>
 
-    <div class="row" id="reportSection" style="display: none;">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Report Output</h3>
-                </div>
-                <div class="box-body">
-                    <p>Report will be displayed here after generation.</p>
-                </div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Filter Panel</h4>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>From Date</label>
+              <input type="date" class="form-control" id="from_date">
             </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>To Date</label>
+              <input type="date" class="form-control" id="to_date">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Department (Optional)</label>
+              <select class="form-control" id="department_id">
+                <option value="">-- All Departments --</option>
+                @foreach($departments as $department)
+                  <option value="{{ $department->id }}">{{ $department->name }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Employee (Optional)</label>
+              <select class="form-control" id="employee_id">
+                <option value="">-- All Employees --</option>
+                @foreach($employees as $employee)
+                  <option value="{{ $employee->id }}">{{ $employee->name }} ({{ $employee->employee_id ?? $employee->id }})</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <button type="button" class="btn btn-primary" id="generateBtn">
+                <i class="fa fa-file-text"></i> Generate Report
+              </button>
+              <button type="button" class="btn btn-default" id="printBtn" disabled>
+                <i class="fa fa-print"></i> Print
+              </button>
+              <button type="button" class="btn btn-default" id="pdfBtn" disabled>
+                <i class="fa fa-file-pdf"></i> Export PDF
+              </button>
+              <button type="button" class="btn btn-default" id="excelBtn" disabled>
+                <i class="fa fa-file-excel"></i> Export Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-@stop
+  </div>
+</div>
+
+<div class="row" id="reportSection" style="display: none;">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Report Output</h4>
+      </div>
+      <div class="panel-body">
+        <p>Report will be displayed here after generation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection

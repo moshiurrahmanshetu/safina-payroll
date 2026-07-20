@@ -76,6 +76,7 @@ use App\Http\Controllers\SalaryStructureController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\SalaryDisbursementController;
 use App\Http\Controllers\SalaryRevisionController;
 use App\Http\Controllers\ShiftController;
@@ -372,8 +373,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   // Attendance Reports
   Route::get('/attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance_reports.index');
   Route::get('/attendance-reports/employee-daily', [AttendanceReportController::class, 'employeeDaily'])->name('attendance_reports.employee_daily');
+  Route::get('/attendance-reports/employee-daily/print', [AttendanceReportController::class, 'employeeDailyPrint'])->name('attendance_reports.employee_daily_print');
   Route::get('/attendance-reports/employee-monthly', [AttendanceReportController::class, 'employeeMonthly'])->name('attendance_reports.employee_monthly');
+  Route::get('/attendance-reports/employee-monthly/print', [AttendanceReportController::class, 'employeeMonthlyPrint'])->name('attendance_reports.employee_monthly_print');
   Route::get('/attendance-reports/daily-register', [AttendanceReportController::class, 'dailyRegister'])->name('attendance_reports.daily_register');
+  Route::get('/attendance-reports/daily-register/print', [AttendanceReportController::class, 'dailyRegisterPrint'])->name('attendance_reports.daily_register_print');
   Route::get('/attendance-reports/monthly-register', [AttendanceReportController::class, 'monthlyRegister'])->name('attendance_reports.monthly_register');
   Route::get('/attendance-reports/late-report', [AttendanceReportController::class, 'lateReport'])->name('attendance_reports.late_report');
   Route::get('/attendance-reports/department-report', [AttendanceReportController::class, 'departmentReport'])->name('attendance_reports.department_report');
