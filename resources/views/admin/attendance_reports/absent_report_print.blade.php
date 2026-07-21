@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Attendance Register - Print</title>
+    <title>Absent Attendance Report - Print</title>
     <style>
         @media print {
             @page {
@@ -111,14 +111,14 @@
             <p>{{ $companyAddress }}</p>
             @endif
             <h3>{{ $reportTitle }}</h3>
-            <p><strong>Attendance Date:</strong> {{ $attendanceDate }}</p>
+            <p><strong>Date Range:</strong> {{ $fromDate }} to {{ $toDate }}</p>
             @if(request('department_id'))
             @php $selectedDept = $departments->firstWhere('id', request('department_id')); @endphp
             <p><strong>Department:</strong> {{ $selectedDept ? $selectedDept->name : 'All Departments' }}</p>
             @endif
-            @if(request('shift_id'))
-            @php $selectedShift = $shifts->firstWhere('id', request('shift_id')); @endphp
-            <p><strong>Shift:</strong> {{ $selectedShift ? $selectedShift->name : 'All Shifts' }}</p>
+            @if(request('employee_id'))
+            @php $selectedEmp = $employees->firstWhere('id', request('employee_id')); @endphp
+            <p><strong>Employee:</strong> {{ $selectedEmp ? $selectedEmp->name : 'All Employees' }}</p>
             @endif
         </div>
 
@@ -127,15 +127,10 @@
             <div class="col-md-12">
                 <table style="font-size: 8px;">
                     <tr>
-                        <td class="text-center" style="width: 11%;"><strong>Total:</strong> {{ $summary['total'] }}</td>
-                        <td class="text-center" style="width: 11%; color: green;"><strong>Present:</strong> {{ $summary['present'] }}</td>
-                        <td class="text-center" style="width: 11%; color: orange;"><strong>Late:</strong> {{ $summary['late'] }}</td>
-                        <td class="text-center" style="width: 11%; color: #f0ad4e;"><strong>Half Day:</strong> {{ $summary['halfDay'] }}</td>
-                        <td class="text-center" style="width: 11%; color: red;"><strong>Absent:</strong> {{ $summary['absent'] }}</td>
-                        <td class="text-center" style="width: 11%; color: #007bff;"><strong>Leave:</strong> {{ $summary['leave'] }}</td>
-                        <td class="text-center" style="width: 11%; color: #9b59b6;"><strong>Holiday:</strong> {{ $summary['holiday'] }}</td>
-                        <td class="text-center" style="width: 11%; color: gray;"><strong>Weekly Off:</strong> {{ $summary['weeklyOff'] }}</td>
-                        <td class="text-center" style="width: 12%; color: #3c8dbc;"><strong>Attendance %:</strong> {{ $summary['attendancePercentage'] }}%</td>
+                        <td class="text-center" style="width: 25%;"><strong>Total Absent Records:</strong> {{ $summary['totalAbsentRecords'] }}</td>
+                        <td class="text-center" style="width: 25%; color: #3c8dbc;"><strong>Total Employees:</strong> {{ $summary['totalEmployees'] }}</td>
+                        <td class="text-center" style="width: 25%; color: red;"><strong>Total Absent Days:</strong> {{ $summary['totalAbsentDays'] }}</td>
+                        <td class="text-center" style="width: 25%; color: #007bff;"><strong>Avg Absent Days:</strong> {{ $summary['averageAbsentDays'] }}</td>
                     </tr>
                 </table>
             </div>
@@ -144,7 +139,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                @if(count($attendanceData) > 0)
+                @if(count($absentData) > 0)
                 <table>
                     <thead>
                         <tr>
@@ -154,65 +149,32 @@
                             <th>Department</th>
                             <th>Designation</th>
                             <th>Assigned Shift</th>
+                            <th class="text-center">Attendance Date</th>
                             <th class="text-center">Status</th>
-                            <th class="text-center">Check In</th>
-                            <th class="text-center">Check Out</th>
-                            <th class="text-center">Late Min</th>
-                            <th class="text-center">Worked Min</th>
                             <th>System Remark</th>
                             <th>HR Remark</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($attendanceData as $index => $data)
-                        @php
-                            $employee = $data['employee'];
-                            $dayData = $data['dayData'];
-                            $status = $dayData['status'] ?? '';
-                        @endphp
+                        @foreach($absentData as $index => $data)
                         <tr style="page-break-inside: avoid;">
                             <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $employee->employee_id ?? $employee->id }}</td>
-                            <td>{{ $employee->name }}</td>
-                            <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                            <td>{{ $employee->designation->name ?? 'N/A' }}</td>
+                            <td class="text-center">{{ $data['employee']->employee_id ?? $data['employee']->id }}</td>
+                            <td>{{ $data['employee']->name }}</td>
+                            <td>{{ $data['employee']->department->name ?? 'N/A' }}</td>
+                            <td>{{ $data['employee']->designation->name ?? 'N/A' }}</td>
                             <td>{{ $data['assignedShift'] ? $data['assignedShift']->name : 'N/A' }}</td>
-                            <td class="text-center">
-                                @if($status)
-                                    @if($status == 'Present')
-                                        <span style="color: green; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Late')
-                                        <span style="color: orange; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Half Day')
-                                        <span style="color: #f0ad4e; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Absent')
-                                        <span style="color: red; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Leave')
-                                        <span style="color: #007bff; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Holiday')
-                                        <span style="color: #9b59b6; font-weight: bold;">{{ $status }}</span>
-                                    @elseif($status == 'Weekly Off')
-                                        <span style="color: gray; font-weight: bold;">{{ $status }}</span>
-                                    @else
-                                        <span style="color: gray;">{{ $status }}</span>
-                                    @endif
-                                @else
-                                    <span style="color: gray;">-</span>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $dayData['check_in'] ?? '-' }}</td>
-                            <td class="text-center">{{ $dayData['check_out'] ?? '-' }}</td>
-                            <td class="text-center">{{ $dayData['late_minutes'] ?? '-' }}</td>
-                            <td class="text-center">{{ $dayData['worked_minutes'] ?? '-' }}</td>
-                            <td>{{ $dayData['system_remark'] ?? '-' }}</td>
-                            <td>{{ $dayData['remarks'] ?? '-' }}</td>
+                            <td class="text-center">{{ $data['attendanceDate'] }}</td>
+                            <td class="text-center" style="color: red; font-weight: bold;">{{ $data['status'] }}</td>
+                            <td>{{ $data['systemRemark'] }}</td>
+                            <td>{{ $data['hrRemark'] }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @else
                 <div style="text-align: center; padding: 20px; border: 1px solid #333;">
-                    <strong>No Attendance Found</strong> for the selected criteria.
+                    <strong>No Absent Records Found</strong> for the selected criteria.
                 </div>
                 @endif
             </div>
@@ -234,26 +196,20 @@
             <div class="col-md-12">
                 <table>
                     <tr>
-                        <td style="width: 25%;">
+                        <td style="width: 33%;">
                             <strong>Prepared By:</strong>
                             <br><br><br>
                             __________________
                             <br><br>
                         </td>
-                        <td style="width: 25%;">
+                        <td style="width: 33%;">
                             <strong>Checked By:</strong>
                             <br><br><br>
                             __________________
                             <br><br>
                         </td>
-                        <td style="width: 25%;">
+                        <td style="width: 34%;">
                             <strong>Approved By:</strong>
-                            <br><br><br>
-                            __________________
-                            <br><br>
-                        </td>
-                        <td style="width: 25%;">
-                            <strong>Received By:</strong>
                             <br><br><br>
                             __________________
                             <br><br>

@@ -379,9 +379,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/attendance-reports/daily-register', [AttendanceReportController::class, 'dailyRegister'])->name('attendance_reports.daily_register');
   Route::get('/attendance-reports/daily-register/print', [AttendanceReportController::class, 'dailyRegisterPrint'])->name('attendance_reports.daily_register_print');
   Route::get('/attendance-reports/monthly-register', [AttendanceReportController::class, 'monthlyRegister'])->name('attendance_reports.monthly_register');
+  Route::get('/attendance-reports/monthly-register/print', [AttendanceReportController::class, 'monthlyRegisterPrint'])->name('attendance_reports.monthly_register_print');
   Route::get('/attendance-reports/late-report', [AttendanceReportController::class, 'lateReport'])->name('attendance_reports.late_report');
+  Route::get('/attendance-reports/late-report/print', [AttendanceReportController::class, 'lateReportPrint'])->name('attendance_reports.late_report_print');
   Route::get('/attendance-reports/department-report', [AttendanceReportController::class, 'departmentReport'])->name('attendance_reports.department_report');
+  Route::get('/attendance-reports/department-report/print', [AttendanceReportController::class, 'departmentReportPrint'])->name('attendance_reports.department_report_print');
+  Route::get('/attendance-reports/absent-report', [AttendanceReportController::class, 'absentReport'])->name('attendance_reports.absent_report');
+  Route::get('/attendance-reports/absent-report/print', [AttendanceReportController::class, 'absentReportPrint'])->name('attendance_reports.absent_report_print');
+  Route::get('/attendance-reports/leave-report', [AttendanceReportController::class, 'leaveReport'])->name('attendance_reports.leave_report');
+  Route::get('/attendance-reports/leave-report/print', [AttendanceReportController::class, 'leaveReportPrint'])->name('attendance_reports.leave_report_print');
   Route::get('/attendance-reports/shift-report', [AttendanceReportController::class, 'shiftReport'])->name('attendance_reports.shift_report');
+  Route::get('/attendance-reports/shift-report/print', [AttendanceReportController::class, 'shiftReportPrint'])->name('attendance_reports.shift_report_print');
   Route::get('/salary_disbursements/reports/bank-payment', [SalaryDisbursementController::class, 'bankPaymentReport'])->name('salary_disbursements.bank_payment');
   Route::get('/salary_disbursements/reports/monthly-register', [SalaryDisbursementController::class, 'monthlySalaryRegister'])->name('salary_disbursements.monthly_register');
   Route::get('/attendances/daily', [AttendanceController::class, 'daily'])->name('attendances.daily');

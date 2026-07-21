@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Department Attendance Report')
+@section('title', 'Leave Attendance Report')
 @section('content')
-<h3 class="page-header">Department Attendance Report {{link_to_route('attendance_reports.index','Attendance Reports',[],array('class'=>'btn btn-success pull-right'))}}</h3>
+<h3 class="page-header">Leave Attendance Report {{link_to_route('attendance_reports.index','Attendance Reports',[],array('class'=>'btn btn-success pull-right'))}}</h3>
 
 <div class="row">
   <div class="col-md-12">
@@ -11,13 +11,25 @@
         <h4>Filter Panel</h4>
       </div>
       <div class="panel-body">
-        <form method="GET" action="{{ route('attendance_reports.department_report') }}">
+        <form method="GET" action="{{ route('attendance_reports.leave_report') }}">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
               <div class="form-group">
-                <label>Department <span class="text-danger">*</span></label>
-                <select class="form-control" name="department_id" required>
-                  <option value="">-- Select Department --</option>
+                <label>From Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" name="from_date" value="{{ request('from_date') }}" required>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>To Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" name="to_date" value="{{ request('to_date') }}" required>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Department (Optional)</label>
+                <select class="form-control" name="department_id">
+                  <option value="">-- All Departments --</option>
                   @foreach($departments as $department)
                     <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
                       {{ $department->name }}
@@ -26,10 +38,17 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
               <div class="form-group">
-                <label>Attendance Month <span class="text-danger">*</span></label>
-                <input type="month" class="form-control" name="attendance_month" value="{{ request('attendance_month') }}" required>
+                <label>Employee (Optional)</label>
+                <select class="form-control" name="employee_id">
+                  <option value="">-- All Employees --</option>
+                  @foreach($employees as $employee)
+                    <option value="{{ $employee->id }}" {{ request('employee_id') == $employee->id ? 'selected' : '' }}>
+                      {{ $employee->name }} ({{ $employee->employee_id ?? $employee->id }})
+                    </option>
+                  @endforeach
+                </select>
               </div>
             </div>
           </div>
@@ -39,8 +58,8 @@
                 <button type="submit" class="btn btn-primary">
                   <i class="fa fa-file-text"></i> Generate Report
                 </button>
-                @if(isset($attendanceMonth))
-                <a href="{{ route('attendance_reports.department_report_print', ['department_id' => $departmentId, 'attendance_month' => $attendanceMonth]) }}" target="_blank" class="btn btn-default">
+                @if(isset($fromDate))
+                <a href="{{ route('attendance_reports.leave_report_print', ['from_date' => $fromDate, 'to_date' => $toDate, 'department_id' => request('department_id'), 'employee_id' => request('employee_id')]) }}" target="_blank" class="btn btn-default">
                   <i class="fa fa-print"></i> Print
                 </a>
                 @endif
@@ -59,7 +78,7 @@
   </div>
 </div>
 
-@if(isset($attendanceMonth))
+@if(isset($fromDate))
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default">
@@ -73,9 +92,15 @@
           <p>{{ $companyAddress }}</p>
           @endif
           <h3>{{ $reportTitle }}</h3>
-          @php $selectedDept = $departments->firstWhere('id', $departmentId); @endphp
-          <p><strong>Department:</strong> {{ $selectedDept ? $selectedDept->name : 'N/A' }}</p>
-          <p><strong>Attendance Month:</strong> {{ $attendanceMonth }}</p>
+          <p><strong>Date Range:</strong> {{ $fromDate }} to {{ $toDate }}</p>
+          @if(request('department_id'))
+          @php $selectedDept = $departments->firstWhere('id', request('department_id')); @endphp
+          <p><strong>Department:</strong> {{ $selectedDept ? $selectedDept->name : 'All Departments' }}</p>
+          @endif
+          @if(request('employee_id'))
+          @php $selectedEmp = $employees->firstWhere('id', request('employee_id')); @endphp
+          <p><strong>Employee:</strong> {{ $selectedEmp ? $selectedEmp->name : 'All Employees' }}</p>
+          @endif
         </div>
 
         @if(isset($summary))
@@ -85,7 +110,15 @@
               <div class="col-md-3">
                 <div class="panel panel-default">
                   <div class="panel-body text-center">
-                    <h4>{{ $summary['totalEmployees'] }}</h4>
+                    <h4>{{ $summary['totalLeaveRecords'] }}</h4>
+                    <small>Total Leave Records</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="panel panel-default">
+                  <div class="panel-body text-center">
+                    <h4 style="color: #3c8dbc;">{{ $summary['totalEmployees'] }}</h4>
                     <small>Total Employees</small>
                   </div>
                 </div>
@@ -93,38 +126,16 @@
               <div class="col-md-3">
                 <div class="panel panel-default">
                   <div class="panel-body text-center">
-                    <h4 style="color: green;">{{ $summary['totalPresent'] }}</h4>
-                    <small>Total Present</small>
+                    <h4 style="color: green;">{{ $summary['paidLeave'] }}</h4>
+                    <small>Paid Leave</small>
                   </div>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="panel panel-default">
                   <div class="panel-body text-center">
-                    <h4 style="color: orange;">{{ $summary['totalLate'] }}</h4>
-                    <small>Total Late</small>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="panel panel-default">
-                  <div class="panel-body text-center">
-                    <h4 style="color: red;">{{ $summary['totalAbsent'] }}</h4>
-                    <small>Total Absent</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-4">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="panel panel-default">
-                  <div class="panel-body text-center">
-                    <h4 style="color: #3c8dbc;">{{ $summary['averageAttendancePercentage'] }}%</h4>
-                    <small>Average Attendance %</small>
+                    <h4 style="color: #9b59b6;">{{ $summary['unpaidLeave'] }}</h4>
+                    <small>Unpaid Leave</small>
                   </div>
                 </div>
               </div>
@@ -135,7 +146,7 @@
 
         <div class="row">
           <div class="col-md-12">
-            @if(count($attendanceData) > 0)
+            @if(count($leaveData) > 0)
             <div class="table-responsive">
               <table class="table table-bordered table-striped">
                 <thead>
@@ -143,48 +154,32 @@
                     <th class="text-center" style="width: 50px;">SL</th>
                     <th class="text-center">Employee ID</th>
                     <th>Employee Name</th>
+                    <th>Department</th>
                     <th>Designation</th>
                     <th>Assigned Shift</th>
-                    <th class="text-center">Present</th>
-                    <th class="text-center">Late</th>
-                    <th class="text-center">Half Day</th>
-                    <th class="text-center">Absent</th>
-                    <th class="text-center">Leave</th>
-                    <th class="text-center">Holiday</th>
-                    <th class="text-center">Weekly Off</th>
-                    <th class="text-center">Attendance %</th>
+                    <th class="text-center">Attendance Date</th>
+                    <th class="text-center">Leave Type</th>
+                    <th class="text-center">Status</th>
+                    <th>System Remark</th>
+                    <th>HR Remark</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($attendanceData as $index => $data)
-                  @php
-                    $employee = $data['employee'];
-                    $attendancePercentage = $data['attendancePercentage'];
-                  @endphp
+                  @foreach($leaveData as $index => $data)
                   <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td class="text-center">{{ $employee->employee_id ?? $employee->id }}</td>
-                    <td>{{ $employee->name }}</td>
-                    <td>{{ $employee->designation->name ?? 'N/A' }}</td>
+                    <td class="text-center">{{ $data['employee']->employee_id ?? $data['employee']->id }}</td>
+                    <td>{{ $data['employee']->name }}</td>
+                    <td>{{ $data['employee']->department->name ?? 'N/A' }}</td>
+                    <td>{{ $data['employee']->designation->name ?? 'N/A' }}</td>
                     <td>{{ $data['assignedShift'] ? $data['assignedShift']->name : 'N/A' }}</td>
-                    <td class="text-center">{{ $data['present'] }}</td>
-                    <td class="text-center">{{ $data['late'] }}</td>
-                    <td class="text-center">{{ $data['halfDay'] }}</td>
-                    <td class="text-center">{{ $data['absent'] }}</td>
-                    <td class="text-center">{{ $data['leave'] }}</td>
-                    <td class="text-center">{{ $data['holiday'] }}</td>
-                    <td class="text-center">{{ $data['weeklyOff'] }}</td>
+                    <td class="text-center">{{ $data['attendanceDate'] }}</td>
+                    <td class="text-center">{{ $data['leaveType'] }}</td>
                     <td class="text-center">
-                      @if($attendancePercentage >= 95)
-                        <span style="color: green; font-weight: bold;">{{ $attendancePercentage }}%</span>
-                      @elseif($attendancePercentage >= 85)
-                        <span style="color: #007bff; font-weight: bold;">{{ $attendancePercentage }}%</span>
-                      @elseif($attendancePercentage >= 70)
-                        <span style="color: orange; font-weight: bold;">{{ $attendancePercentage }}%</span>
-                      @else
-                        <span style="color: red; font-weight: bold;">{{ $attendancePercentage }}%</span>
-                      @endif
+                      <span class="badge badge-info">{{ $data['status'] }}</span>
                     </td>
+                    <td>{{ $data['systemRemark'] }}</td>
+                    <td>{{ $data['hrRemark'] }}</td>
                   </tr>
                   @endforeach
                 </tbody>
@@ -192,7 +187,7 @@
             </div>
             @else
             <div class="alert alert-warning">
-              <strong>No Attendance Found</strong> for the selected criteria.
+              <strong>No Leave Records Found</strong> for the selected criteria.
             </div>
             @endif
           </div>
