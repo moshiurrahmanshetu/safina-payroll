@@ -349,6 +349,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/payrolls/{id}/submit', [PayrollController::class, 'submit'])->name('payrolls.submit');
   Route::get('/payrolls/{id}/approve', [PayrollController::class, 'approve'])->name('payrolls.approve');
   Route::post('/payrolls/{id}/return', [PayrollController::class, 'returnPayroll'])->name('payrolls.return');
+  Route::get('/payrolls/{id}/payslip-print', [PayrollController::class, 'payslipPrint'])->name('payrolls.payslip_print');
   Route::resource('salary_disbursements', SalaryDisbursementController::class);
   Route::post('/salary_disbursements/process-payment', [SalaryDisbursementController::class, 'processPayment'])->name('salary_disbursements.process_payment');
   Route::get('/salary_disbursements/{id}/payslip', [SalaryDisbursementController::class, 'payslip'])->name('salary_disbursements.payslip');

@@ -1,7 +1,62 @@
 @extends('layouts.admin')
 @section('title', 'Payroll Details')
 @section('content')
-<h3 class="page-header">Payroll Details {{link_to_route('payrolls.index','Payroll List',[],array('class'=>'btn btn-success pull-right'))}}</h3>
+<h3 class="page-header">Payroll Details 
+  <a href="{{ route('payrolls.index') }}" class="btn btn-success pull-right">Payroll List</a>
+  <a href="{{ route('payrolls.payslip_print', $payroll->id) }}" class="btn btn-primary pull-right" style="margin-right: 10px;" target="_blank"><i class="fa fa-print"></i> Print Payslip</a>
+</h3>
+
+<!-- Summary Cards -->
+<div class="row">
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-aqua">
+      <div class="inner">
+        <h3>{{ number_format($payroll->generated_salary, 2) }}</h3>
+        <p>Generated Salary</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-money"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-green">
+      <div class="inner">
+        <h3>{{ number_format($payroll->net_salary, 2) }}</h3>
+        <p>Net Salary</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-check-circle"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-yellow">
+      <div class="small-box-footer">
+        <span class="badge bg-{{ $payroll->approval_status == 'approved' ? 'green' : ($payroll->approval_status == 'submitted' ? 'blue' : 'gray') }}">{{ ucfirst($payroll->approval_status) }}</span>
+      </div>
+      <div class="inner">
+        <h3>{{ $attendanceSummary['Present'] }}</h3>
+        <p>Present Days</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-calendar-check"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-xs-6">
+    <div class="small-box bg-red">
+      <div class="inner">
+        <h3>{{ $attendanceSummary['Absent'] }}</h3>
+        <p>Absent Days</p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-calendar-times"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
 
 <div class="row">
   <div class="col-md-12">
@@ -92,37 +147,37 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Present</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #d4edda; font-weight: bold;" value="{{ $attendanceSummary['Present'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Late</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #fff3cd; font-weight: bold;" value="{{ $attendanceSummary['Late'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Half Day</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #e2e3e5; font-weight: bold;" value="{{ $attendanceSummary['Half Day'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Absent</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #f8d7da; font-weight: bold;" value="{{ $attendanceSummary['Absent'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Leave</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #d1ecf1; font-weight: bold;" value="{{ $attendanceSummary['Leave'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Holiday</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #d6d8d9; font-weight: bold;" value="{{ $attendanceSummary['Holiday'] }}" readonly>
             </div>
           </div>
         </div>
@@ -130,25 +185,25 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Weekly Off</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #d6d8d9; font-weight: bold;" value="{{ $attendanceSummary['Weekly Off'] }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Late Deduction</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #fff3cd; font-weight: bold;" value="{{ number_format($lateDeduction, 2) }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Absent Deduction</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #f8d7da; font-weight: bold;" value="{{ number_format($absentDeduction, 2) }}" readonly>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group">
               <label class="control-label">Effective Absent</label>
-              <input type="text" class="form-control" value="0" readonly>
+              <input type="text" class="form-control" style="background-color: #f8d7da; font-weight: bold;" value="{{ $effectiveAbsent }}" readonly>
             </div>
           </div>
         </div>
@@ -168,25 +223,25 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Basic Salary</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->basic_salary : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->basic_salary, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">House Rent</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->house_rent : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->house_rent, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Medical</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->medical : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->medical, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Transport</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->transport : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->transport, 2) : 'N/A' }}" readonly>
             </div>
           </div>
         </div>
@@ -194,25 +249,25 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Food</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->food : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->food, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Mobile</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->mobile : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->mobile, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Other Allowance</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->other_allowance : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->other_allowance, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Festival Bonus</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->festival_bonus : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->festival_bonus, 2) : 'N/A' }}" readonly>
             </div>
           </div>
         </div>
@@ -220,25 +275,25 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Tax</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->tax : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->tax, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">PF</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->pf : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->pf, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Other Deduction</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->other_deduction : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->other_deduction, 2) : 'N/A' }}" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label class="control-label">Advance Salary</label>
-              <input type="text" class="form-control" value="{{ $payroll->salaryStructure ? $payroll->salaryStructure->advance_salary : 'N/A' }}" readonly>
+              <input type="text" class="form-control" value="{{ $salary ? number_format($salary->advance_salary, 2) : 'N/A' }}" readonly>
             </div>
           </div>
         </div>

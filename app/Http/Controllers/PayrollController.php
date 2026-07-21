@@ -312,14 +312,10 @@ class PayrollController extends Controller
     $userId = $request->user_id;
     $payrollMonth = $request->payroll_month; // YYYY-MM format
 
-    // Parse the month to get start and end dates
-    $startDate = date('Y-m-01', strtotime($payrollMonth));
-    $endDate = date('Y-m-t', strtotime($payrollMonth));
-
-    // Get attendance summary
-    $attendances = Attendance::where('user_id', $userId)
-                              ->whereBetween('attendance_date', [$startDate, $endDate])
-                              ->get();
+    // Get attendance summary from attendance_months table
+    $attendanceMonth = \App\Models\AttendanceMonth::where('user_id', $userId)
+                                                  ->where('attendance_month', $payrollMonth)
+                                                  ->first();
 
     $summary = [
       'Present' => 0,
@@ -331,14 +327,42 @@ class PayrollController extends Controller
       'Weekly Off' => 0
     ];
 
-    foreach ($attendances as $attendance) {
-      if (isset($summary[$attendance->status])) {
-        $summary[$attendance->status]++;
-      }
+    if ($attendanceMonth) {
+      $summary['Present'] = $attendanceMonth->summary_present ?? 0;
+      $summary['Late'] = $attendanceMonth->summary_late ?? 0;
+      $summary['Half Day'] = $attendanceMonth->summary_halfday ?? 0;
+      $summary['Absent'] = $attendanceMonth->summary_absent ?? 0;
+      $summary['Leave'] = $attendanceMonth->summary_leave ?? 0;
+      $summary['Holiday'] = $attendanceMonth->summary_holiday ?? 0;
+      $summary['Weekly Off'] = $attendanceMonth->summary_weekly_off ?? 0;
+    }
+
+    // Get current salary for deduction calculations
+    $salary = Salary::where('user_id', $userId)
+                     ->where('is_current', 1)
+                     ->where('status', 1)
+                     ->first();
+
+    $lateDeduction = 0;
+    $absentDeduction = 0;
+    $effectiveAbsent = 0;
+
+    if ($salary) {
+      $lateCount = $summary['Late'];
+      $absentCount = $summary['Absent'];
+      $halfDayCount = $summary['Half Day'];
+
+      // Calculate deductions using existing payroll calculation logic
+      $lateDeduction = $lateCount * $salary->late_fine;
+      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
     }
 
     return response()->json([
-      'attendance_summary' => $summary
+      'attendance_summary' => $summary,
+      'late_deduction' => number_format($lateDeduction, 2, '.', ''),
+      'absent_deduction' => number_format($absentDeduction, 2, '.', ''),
+      'effective_absent' => $effectiveAbsent
     ]);
   }
 
@@ -402,13 +426,13 @@ class PayrollController extends Controller
     ];
 
     if ($attendanceMonth) {
-      $summary['Present'] = $attendanceMonth->total_present;
-      $summary['Late'] = $attendanceMonth->total_late;
-      $summary['Half Day'] = $attendanceMonth->total_halfday;
-      $summary['Absent'] = $attendanceMonth->total_absent;
-      $summary['Leave'] = $attendanceMonth->total_leave;
-      $summary['Holiday'] = $attendanceMonth->total_holiday;
-      $summary['Weekly Off'] = $attendanceMonth->total_weekly_off;
+      $summary['Present'] = $attendanceMonth->summary_present ?? 0;
+      $summary['Late'] = $attendanceMonth->summary_late ?? 0;
+      $summary['Half Day'] = $attendanceMonth->summary_halfday ?? 0;
+      $summary['Absent'] = $attendanceMonth->summary_absent ?? 0;
+      $summary['Leave'] = $attendanceMonth->summary_leave ?? 0;
+      $summary['Holiday'] = $attendanceMonth->summary_holiday ?? 0;
+      $summary['Weekly Off'] = $attendanceMonth->summary_weekly_off ?? 0;
     }
 
     $lateCount = $summary['Late'];
@@ -563,6 +587,94 @@ class PayrollController extends Controller
   {
     $payroll = Payroll::with(['user', 'salaryStructure', 'creator', 'updater', 'approver', 'returner'])->findorfail($id);
 
-    return view('admin.payrolls.show', compact('payroll'));
+    // Load attendance month data
+    $attendanceMonth = \App\Models\AttendanceMonth::where('user_id', $payroll->user_id)
+                                                  ->where('attendance_month', $payroll->payroll_month)
+                                                  ->first();
+
+    // Load salary data for components
+    $salary = Salary::where('user_id', $payroll->user_id)
+                     ->where('is_current', 1)
+                     ->where('status', 1)
+                     ->first();
+
+    // Calculate attendance summary and deductions
+    $attendanceSummary = [
+      'Present' => $attendanceMonth ? ($attendanceMonth->summary_present ?? 0) : 0,
+      'Late' => $attendanceMonth ? ($attendanceMonth->summary_late ?? 0) : 0,
+      'Half Day' => $attendanceMonth ? ($attendanceMonth->summary_halfday ?? 0) : 0,
+      'Absent' => $attendanceMonth ? ($attendanceMonth->summary_absent ?? 0) : 0,
+      'Leave' => $attendanceMonth ? ($attendanceMonth->summary_leave ?? 0) : 0,
+      'Holiday' => $attendanceMonth ? ($attendanceMonth->summary_holiday ?? 0) : 0,
+      'Weekly Off' => $attendanceMonth ? ($attendanceMonth->summary_weekly_off ?? 0) : 0,
+    ];
+
+    $lateDeduction = 0;
+    $absentDeduction = 0;
+    $effectiveAbsent = 0;
+
+    if ($salary) {
+      $lateCount = $attendanceSummary['Late'];
+      $absentCount = $attendanceSummary['Absent'];
+      $halfDayCount = $attendanceSummary['Half Day'];
+
+      $lateDeduction = $lateCount * $salary->late_fine;
+      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
+    }
+
+    return view('admin.payrolls.show', compact('payroll', 'attendanceSummary', 'lateDeduction', 'absentDeduction', 'effectiveAbsent', 'salary'));
+  }
+
+  /**
+   * Print payslip
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function payslipPrint($id)
+  {
+    $payroll = Payroll::with(['user', 'salaryStructure', 'creator', 'updater', 'approver', 'returner'])->findorfail($id);
+
+    // Load attendance month data
+    $attendanceMonth = \App\Models\AttendanceMonth::where('user_id', $payroll->user_id)
+                                                  ->where('attendance_month', $payroll->payroll_month)
+                                                  ->first();
+
+    // Load salary data for components
+    $salary = Salary::where('user_id', $payroll->user_id)
+                     ->where('is_current', 1)
+                     ->where('status', 1)
+                     ->first();
+
+    // Calculate attendance summary and deductions
+    $attendanceSummary = [
+      'Present' => $attendanceMonth ? ($attendanceMonth->summary_present ?? 0) : 0,
+      'Late' => $attendanceMonth ? ($attendanceMonth->summary_late ?? 0) : 0,
+      'Half Day' => $attendanceMonth ? ($attendanceMonth->summary_halfday ?? 0) : 0,
+      'Absent' => $attendanceMonth ? ($attendanceMonth->summary_absent ?? 0) : 0,
+      'Leave' => $attendanceMonth ? ($attendanceMonth->summary_leave ?? 0) : 0,
+      'Holiday' => $attendanceMonth ? ($attendanceMonth->summary_holiday ?? 0) : 0,
+      'Weekly Off' => $attendanceMonth ? ($attendanceMonth->summary_weekly_off ?? 0) : 0,
+    ];
+
+    $lateDeduction = 0;
+    $absentDeduction = 0;
+    $effectiveAbsent = 0;
+
+    if ($salary) {
+      $lateCount = $attendanceSummary['Late'];
+      $absentCount = $attendanceSummary['Absent'];
+      $halfDayCount = $attendanceSummary['Half Day'];
+
+      $lateDeduction = $lateCount * $salary->late_fine;
+      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
+    }
+
+    // Load site info
+    $siteInfo = \App\Models\SiteSetting::orderBy('id', 'desc')->first();
+
+    return view('admin.payrolls.payslip_print', compact('payroll', 'attendanceSummary', 'lateDeduction', 'absentDeduction', 'effectiveAbsent', 'salary', 'siteInfo'));
   }
 }
