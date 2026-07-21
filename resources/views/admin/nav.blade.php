@@ -690,7 +690,7 @@
     @endif
 
     <!-- HR & Payroll Management Menu -->
-    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit', 'SalaryStructureController@create', 'SalaryStructureController@index', 'SalaryStructureController@edit', 'PayrollController@create', 'PayrollController@index', 'PayrollController@edit', 'AttendanceController@create', 'AttendanceController@index', 'AttendanceController@edit'], $menu_list))
+    @if(checkMenuActive(['PermanentEmployeeController@create', 'PermanentEmployeeController@index', 'PermanentEmployeeController@edit', 'WorkAreaController@create', 'WorkAreaController@index', 'WorkAreaController@edit', 'DailyWorkerController@create', 'DailyWorkerController@index', 'DailyWorkerController@edit', 'ContractWorkerController@create', 'ContractWorkerController@index', 'ContractWorkerController@edit', 'SalaryStructureController@create', 'SalaryStructureController@index', 'SalaryStructureController@edit', 'PayrollController@create', 'PayrollController@index', 'PayrollController@edit', 'AttendanceController@create', 'AttendanceController@index', 'AttendanceController@edit', 'AttendanceDashboardController@index'], $menu_list))
       <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
           <i class="nav-icon icon-people"></i> HR & Payroll</a>
@@ -795,6 +795,12 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('attendances.index') }}">
               <i class="nav-icon icon-list"></i>Attendance List</a>
+          </li>
+          @endif
+          @if(checkMenuActive('AttendanceDashboardController@index', $menu_list))
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('attendance.dashboard') }}">
+              <i class="nav-icon icon-list"></i>Attendance Dashboard</a>
           </li>
           @endif
           @if(checkMenuActive('ShiftController@index', $menu_list))

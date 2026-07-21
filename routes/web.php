@@ -28,6 +28,7 @@ use App\Http\Controllers\StockInController;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\IndentController;
 use App\Http\Controllers\MrsItemController;
+use App\Http\Controllers\AttendanceDashboardController;
 use App\Http\Controllers\PurposeController;
 use App\Http\Controllers\PurchaseTransactionController;
 use App\Http\Controllers\TicketCategoryController;
@@ -390,6 +391,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'permissions']], fun
   Route::get('/attendance-reports/leave-report/print', [AttendanceReportController::class, 'leaveReportPrint'])->name('attendance_reports.leave_report_print');
   Route::get('/attendance-reports/shift-report', [AttendanceReportController::class, 'shiftReport'])->name('attendance_reports.shift_report');
   Route::get('/attendance-reports/shift-report/print', [AttendanceReportController::class, 'shiftReportPrint'])->name('attendance_reports.shift_report_print');
+  Route::get('/attendance/dashboard', [AttendanceDashboardController::class, 'index'])->name('attendance.dashboard');
   Route::get('/salary_disbursements/reports/bank-payment', [SalaryDisbursementController::class, 'bankPaymentReport'])->name('salary_disbursements.bank_payment');
   Route::get('/salary_disbursements/reports/monthly-register', [SalaryDisbursementController::class, 'monthlySalaryRegister'])->name('salary_disbursements.monthly_register');
   Route::get('/attendances/daily', [AttendanceController::class, 'daily'])->name('attendances.daily');
