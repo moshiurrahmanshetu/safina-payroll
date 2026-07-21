@@ -36,7 +36,7 @@
             </tr>
             <tr>
                 <td><strong>Assigned Shift:</strong></td>
-                <td>{{ $attendanceMonth->shift->name ?? 'N/A' }}</td>
+                <td>{{ $assignedShift && $assignedShift->shift ? $assignedShift->shift->name : 'N/A' }}</td>
             </tr>
             <tr>
                 <td><strong>Attendance Month:</strong></td>

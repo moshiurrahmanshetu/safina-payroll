@@ -16,9 +16,9 @@
                 <label>Employee <span class="text-danger">*</span></label>
                 <select class="form-control" name="employee_id" required>
                   <option value="">-- Select Employee --</option>
-                  <?php $__currentLoopData = $employees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $employee): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <option value="<?php echo e($employee->id); ?>" <?php echo e(request('employee_id') == $employee->id ? 'selected' : ''); ?>>
-                      <?php echo e($employee->name); ?> (<?php echo e($employee->employee_id ?? $employee->id); ?>)
+                   <?php $__currentLoopData = $employees; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $emp): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($emp->id); ?>" <?php echo e(request('employee_id') == $emp->id ? 'selected' : ''); ?>>
+                        <?php echo e($emp->name); ?> (<?php echo e($emp->employee_id ?? $emp->id); ?>)
                     </option>
                   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
@@ -96,7 +96,7 @@
               </tr>
               <tr>
                 <td><strong>Assigned Shift:</strong></td>
-                <td><?php echo e($attendanceMonthRecord->shift->name ?? 'N/A'); ?></td>
+                <td><?php echo e($assignedShift && $assignedShift->shift ? $assignedShift->shift->name : 'N/A'); ?></td>
               </tr>
               <tr>
                 <td><strong>Attendance Date:</strong></td>

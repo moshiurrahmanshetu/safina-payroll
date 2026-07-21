@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Shift;
+use App\Services\EmployeeShiftService;
 use App\Models\SiteSetting;
 use Carbon\Carbon;
 
@@ -20,7 +21,14 @@ class AttendanceReportController extends Controller
     {
         return view('admin.attendance_reports.index');
     }
-
+    
+    protected $employeeShiftService;
+        public function __construct(EmployeeShiftService $employeeShiftService)
+        {
+            parent::__construct();
+            $this->employeeShiftService = $employeeShiftService;
+        }
+        
     /**
      * Employee Daily Attendance Report
      * Filter: Employee, Date
@@ -35,6 +43,7 @@ class AttendanceReportController extends Controller
 
         if ($request->has('employee_id') && $request->has('attendance_date')) {
             $employee = User::find($request->employee_id);
+            $assignedShift = $this->employeeShiftService->getShiftForDate($employee->id, $request->attendance_date);
             $attendanceDate = $request->attendance_date;
             $attendanceMonth = substr($attendanceDate, 0, 7); // Extract YYYY-MM from YYYY-MM-DD
 
@@ -54,6 +63,7 @@ class AttendanceReportController extends Controller
                 $data['reportTitle'] = 'Employee Daily Attendance Report';
                 $data['generatedBy'] = auth()->user()->name ?? 'System';
                 $data['generatedDate'] = now()->format('Y-m-d H:i:s');
+                $data['assignedShift'] = $assignedShift;
             } else {
                 $data['employee'] = $employee;
                 $data['attendanceDate'] = $attendanceDate;
@@ -62,11 +72,13 @@ class AttendanceReportController extends Controller
                 $data['reportTitle'] = 'Employee Daily Attendance Report';
                 $data['generatedBy'] = auth()->user()->name ?? 'System';
                 $data['generatedDate'] = now()->format('Y-m-d H:i:s');
+                $data['assignedShift'] = $assignedShift;
             }
         }
 
         return view('admin.attendance_reports.employee_daily', $data);
     }
+
 
     /**
      * Employee Daily Attendance Report - Print
@@ -74,6 +86,7 @@ class AttendanceReportController extends Controller
     public function employeeDailyPrint(Request $request)
     {
         $employee = User::find($request->employee_id);
+        $assignedShift = $this->employeeShiftService->getShiftForDate($employee->id, $request->attendance_date);
         $attendanceDate = $request->attendance_date;
         $attendanceMonth = substr($attendanceDate, 0, 7);
 
@@ -104,6 +117,7 @@ class AttendanceReportController extends Controller
             'generatedBy' => auth()->user()->name ?? 'System',
             'generatedDate' => now()->format('Y-m-d H:i:s'),
             'printedDate' => now()->format('Y-m-d H:i:s'),
+            'assignedShift' => $assignedShift,
         ];
 
         return view('admin.attendance_reports.employee_daily_print', $data);
@@ -126,6 +140,9 @@ class AttendanceReportController extends Controller
 
         if ($request->has('employee_id') && $request->has('attendance_month')) {
             $employee = User::find($request->employee_id);
+            $firstDate = $request->attendance_month . '-01';
+            $assignedShift = $this->employeeShiftService->getShiftForDate($employee->id, $firstDate);
+            $data['assignedShift'] = $assignedShift;
             $attendanceMonth = AttendanceMonth::where('user_id', $request->employee_id)
                                                ->where('attendance_month', $request->attendance_month)
                                                ->first();
@@ -149,6 +166,7 @@ class AttendanceReportController extends Controller
                 $data['attendancePercentage'] = $attendancePercentage;
                 $data['generatedBy'] = auth()->user()->name ?? 'System';
                 $data['generatedDate'] = now()->format('Y-m-d H:i:s');
+                $data['assignedShift'] = $assignedShift;
             }
         }
 
@@ -161,6 +179,9 @@ class AttendanceReportController extends Controller
     public function employeeMonthlyPrint(Request $request)
     {
         $employee = User::find($request->employee_id);
+        $firstDate = $request->attendance_month . '-01';
+        $assignedShift = $this->employeeShiftService->getShiftForDate($employee->id, $firstDate);
+        $data['assignedShift'] = $assignedShift;
         $attendanceMonth = AttendanceMonth::where('user_id', $request->employee_id)
                                            ->where('attendance_month', $request->attendance_month)
                                            ->first();
@@ -190,6 +211,7 @@ class AttendanceReportController extends Controller
             'generatedBy' => auth()->user()->name ?? 'System',
             'generatedDate' => now()->format('Y-m-d H:i:s'),
             'printedDate' => now()->format('Y-m-d H:i:s'),
+            'assignedShift' => $assignedShift,
         ];
 
         return view('admin.attendance_reports.employee_monthly_print', $data);

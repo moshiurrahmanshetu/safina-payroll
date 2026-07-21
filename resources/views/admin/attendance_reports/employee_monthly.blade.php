@@ -18,9 +18,9 @@
                 <label>Employee <span class="text-danger">*</span></label>
                 <select class="form-control" name="employee_id" required>
                   <option value="">-- Select Employee --</option>
-                  @foreach($employees as $employee)
-                    <option value="{{ $employee->id }}" {{ request('employee_id') == $employee->id ? 'selected' : '' }}>
-                      {{ $employee->name }} ({{ $employee->employee_id ?? $employee->id }})
+                  @foreach($employees as $emp)
+                    <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>
+                        {{ $emp->name }} ({{ $emp->employee_id ?? $emp->id }})
                     </option>
                   @endforeach
                 </select>
@@ -98,7 +98,7 @@
               </tr>
               <tr>
                 <td><strong>Assigned Shift:</strong></td>
-                <td>{{ $attendanceMonth->shift->name ?? 'N/A' }}</td>
+                <td>{{ $assignedShift && $assignedShift->shift ? $assignedShift->shift->name : 'N/A' }}</td> 
               </tr>
               <tr>
                 <td><strong>Attendance Month:</strong></td>

@@ -34,7 +34,8 @@
             </tr>
             <tr>
                 <td><strong>Assigned Shift:</strong></td>
-                <td><?php echo e($attendanceMonthRecord->shift->name ?? 'N/A'); ?></td>
+                <td><?php echo e($assignedShift && $assignedShift->shift ? $assignedShift->shift->name : 'N/A'); ?></td>
+                
             </tr>
             <tr>
                 <td><strong>Attendance Date:</strong></td>
