@@ -75,7 +75,7 @@
           <div class="col-md-6">
             <div class="form-group">
               <label class="control-label">Late Grace Minutes</label>
-              {{Form::number('late_grace_minutes',0, array('class' => 'form-control', 'min'=>'0'))}}
+              {{Form::number('late_grace_minutes',$shift->late_grace_minutes, array('class' => 'form-control', 'min'=>'0'))}}
               {!! $errors->first('late_grace_minutes', '<p class="text-danger">:message</p>') !!}
               <small class="text-muted">Minutes allowed after start time before marking as late.</small>
             </div>
@@ -83,7 +83,7 @@
           <div class="col-md-6">
             <div class="form-group">
               <label class="control-label">Early Leave Grace Minutes</label>
-              {{Form::number('early_leave_grace_minutes',0, array('class' => 'form-control', 'min'=>'0'))}}
+              {{Form::number('early_leave_grace_minutes',$shift->early_leave_grace_minutes, array('class' => 'form-control', 'min'=>'0'))}}
               {!! $errors->first('early_leave_grace_minutes', '<p class="text-danger">:message</p>') !!}
               <small class="text-muted">Minutes allowed before end time for early leave.</small>
             </div>

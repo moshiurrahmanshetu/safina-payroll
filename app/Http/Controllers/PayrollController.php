@@ -354,7 +354,8 @@ class PayrollController extends Controller
 
       // Calculate deductions using existing payroll calculation logic
       $lateDeduction = $lateCount * $salary->late_fine;
-      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      // Business Rule: First 4 absent days are free, deduction starts from 5th day
+      $effectiveAbsent = max($absentCount - 4, 0);
       $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
     }
 
@@ -441,7 +442,8 @@ class PayrollController extends Controller
 
     // Calculate deductions
     $lateDeduction = $lateCount * $salary->late_fine;
-    $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+    // Business Rule: First 4 absent days are free, deduction starts from 5th day
+    $effectiveAbsent = max($absentCount - 4, 0);
     $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
 
     // Calculate total allowances
@@ -619,7 +621,8 @@ class PayrollController extends Controller
       $halfDayCount = $attendanceSummary['Half Day'];
 
       $lateDeduction = $lateCount * $salary->late_fine;
-      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      // Business Rule: First 4 absent days are free, deduction starts from 5th day
+      $effectiveAbsent = max($absentCount - 4, 0);
       $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
     }
 
@@ -668,7 +671,8 @@ class PayrollController extends Controller
       $halfDayCount = $attendanceSummary['Half Day'];
 
       $lateDeduction = $lateCount * $salary->late_fine;
-      $effectiveAbsent = $absentCount + ($halfDayCount * 0.5);
+      // Business Rule: First 4 absent days are free, deduction starts from 5th day
+      $effectiveAbsent = max($absentCount - 4, 0);
       $absentDeduction = $effectiveAbsent * $salary->absent_deduction;
     }
 

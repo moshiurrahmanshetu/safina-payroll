@@ -127,11 +127,19 @@
           </div>
           <div class="col-md-3">
             <div class="form-group">
+              <label class="control-label">Early Leave Minutes</label>
+              <input type="text" class="form-control" id="early_leave_minutes" value="" readonly>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
               <label class="control-label">Worked Minutes</label>
               <input type="text" class="form-control" id="worked_minutes" value="" readonly>
             </div>
           </div>
-          <div class="col-md-3">
+        </div>
+        <div class="row">
+          <div class="col-md-12">
             <div class="form-group">
               <label class="control-label">System Remark</label>
               <input type="text" class="form-control" id="system_remark" value="" readonly>
@@ -210,7 +218,11 @@ $(document).ready(function() {
         attendance_date: attendanceDate
       },
       success: function(response) {
-        $('#shift_name').val(response.shift_name || '');
+        if (response.start_time && response.end_time) {
+          $('#shift_name').val(response.shift_name + ' (' + response.start_time + ' - ' + response.end_time + ')');
+        } else {
+          $('#shift_name').val(response.shift_name || '');
+        }
         $('#shift_id').val(response.shift_id || '');
 
         // If no shift assigned, disable save
@@ -275,6 +287,7 @@ $(document).ready(function() {
           $('#manual_status').val(response.manual_status || '');
           $('#status').val(response.status || '');
           $('#late_minutes').val(response.late_minutes || '');
+          $('#early_leave_minutes').val(response.early_leave_minutes || '');
           $('#worked_minutes').val(response.worked_minutes || '');
           $('#system_remark').val(response.system_remark || '');
           $('#remarks').val(response.day_data.remarks || '');
@@ -285,6 +298,7 @@ $(document).ready(function() {
           $('#manual_status').val('');
           $('#status').val('');
           $('#late_minutes').val('');
+          $('#early_leave_minutes').val('');
           $('#worked_minutes').val('');
           $('#system_remark').val('');
           $('#remarks').val('');
@@ -366,6 +380,7 @@ $(document).ready(function() {
         // Update UI with calculated data
         $('#status').val(response.status || '');
         $('#late_minutes').val(response.late_minutes || '');
+        $('#early_leave_minutes').val(response.early_leave_minutes || '');
         $('#worked_minutes').val(response.worked_minutes || '');
         $('#system_remark').val(response.system_remark || '');
       },

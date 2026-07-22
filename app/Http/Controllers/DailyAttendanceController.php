@@ -61,9 +61,12 @@ class DailyAttendanceController extends Controller
         $employeeShift = $this->employeeShiftService->getShiftForDate($userId, $date);
 
         if ($employeeShift && $employeeShift->shift) {
+            $shift = $employeeShift->shift;
             return response()->json([
                 'shift_id' => $employeeShift->shift_id,
-                'shift_name' => $employeeShift->shift->name,
+                'shift_name' => $shift->name,
+                'start_time' => Carbon::parse($shift->start_time)->format('h:i A'),
+                'end_time' => Carbon::parse($shift->end_time)->format('h:i A'),
                 'source' => 'employee_shifts'
             ]);
         }
@@ -76,6 +79,8 @@ class DailyAttendanceController extends Controller
                 return response()->json([
                     'shift_id' => $shift->id,
                     'shift_name' => $shift->name,
+                    'start_time' => Carbon::parse($shift->start_time)->format('h:i A'),
+                    'end_time' => Carbon::parse($shift->end_time)->format('h:i A'),
                     'source' => 'user_default'
                 ]);
             }
@@ -135,6 +140,7 @@ class DailyAttendanceController extends Controller
             'manual_status' => $dayData['manual_status'] ?? '',
             'status' => $dayData['status'] ?? '',
             'late_minutes' => $dayData['late_minutes'] ?? '',
+            'early_leave_minutes' => $dayData['early_leave_minutes'] ?? '',
             'worked_minutes' => $dayData['worked_minutes'] ?? '',
             'system_remark' => $dayData['system_remark'] ?? ''
         ]);
@@ -188,6 +194,7 @@ class DailyAttendanceController extends Controller
             'shift_id' => $data['shift_id'] ?? '',
             'manual_status' => $data['manual_status'] ?? '',
             'late_minutes' => $calculatedData['late_minutes'] ?? '',
+            'early_leave_minutes' => $calculatedData['early_leave_minutes'] ?? '',
             'worked_minutes' => $calculatedData['worked_minutes'] ?? '',
             'system_remark' => $calculatedData['system_remark'] ?? '',
             'remarks' => $data['remarks'] ?? ''
@@ -216,6 +223,7 @@ class DailyAttendanceController extends Controller
                     'shift_id' => '',
                     'manual_status' => '',
                     'late_minutes' => '',
+                    'early_leave_minutes' => '',
                     'worked_minutes' => '',
                     'system_remark' => '',
                     'remarks' => ''
@@ -493,6 +501,7 @@ class DailyAttendanceController extends Controller
         return response()->json([
             'status' => $calculatedData['status'] ?? '',
             'late_minutes' => $calculatedData['late_minutes'] ?? '',
+            'early_leave_minutes' => $calculatedData['early_leave_minutes'] ?? '',
             'worked_minutes' => $calculatedData['worked_minutes'] ?? '',
             'system_remark' => $calculatedData['system_remark'] ?? '',
             'is_locked' => $isLocked

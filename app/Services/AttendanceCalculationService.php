@@ -56,6 +56,9 @@ class AttendanceCalculationService
             $checkOutTime,
             $workedMinutes,
             $lateMinutes,
+            $shift->late_grace_minutes,
+            $earlyLeaveMinutes,
+            $shift->early_leave_grace_minutes,
             $shiftDuration
         );
 
@@ -63,6 +66,11 @@ class AttendanceCalculationService
         $remark = '';
         if ($isAutoCheckout) {
             $remark = 'Did not checkout';
+        }
+
+        // Generate remark for early leave
+        if ($earlyLeaveMinutes > 0) {
+            $remark = $remark ? $remark . ', Early Leave (' . $earlyLeaveMinutes . ' minutes)' : 'Early Leave (' . $earlyLeaveMinutes . ' minutes)';
         }
 
         // Return calculated array matching attendance_json structure
@@ -74,7 +82,7 @@ class AttendanceCalculationService
             'worked_minutes' => $workedMinutes,
             'late_minutes' => $lateMinutes,
             'early_leave_minutes' => $earlyLeaveMinutes,
-            'is_late' => $lateMinutes > 0,
+            'is_late' => $lateMinutes > $shift->late_grace_minutes,
             'is_auto_checkout' => $isAutoCheckout,
             'remark' => $remark,
         ];
@@ -135,7 +143,7 @@ class AttendanceCalculationService
     /**
      * Calculate late minutes
      * Late = Check In - Shift Start
-     * Only counts if late > grace minutes
+     * Grace period only used for decision, not calculation
      *
      * @param Carbon|null $checkIn
      * @param Carbon $shiftStart
@@ -151,21 +159,21 @@ class AttendanceCalculationService
         if ($checkIn->lte($shiftStart)) {
             return 0;
         }
-
         $lateMinutes = $shiftStart->diffInMinutes($checkIn);
 
-        // Only count late if exceeds grace period
+        // Within grace → no late minutes
         if ($lateMinutes <= $graceMinutes) {
             return 0;
         }
 
-        return $lateMinutes;
+        // Return full late minutes (check_in - shift_start), not subtracting grace
+        return $shiftStart->diffInMinutes($checkIn);
     }
 
     /**
      * Calculate early leave minutes
      * Early Leave = Shift End - Check Out
-     * Only counts if > grace minutes
+     * Grace period only used for decision, not calculation
      *
      * @param Carbon|null $checkOut
      * @param Carbon $shiftEnd
@@ -184,11 +192,12 @@ class AttendanceCalculationService
 
         $earlyLeaveMinutes = $checkOut->diffInMinutes($shiftEnd);
 
-        // Only count early leave if exceeds grace period
+        // Grace period only used for decision - if within grace, no early leave
         if ($earlyLeaveMinutes <= $graceMinutes) {
             return 0;
         }
 
+        // Return full early leave minutes (shift_end - checkout), not subtracting grace
         return $earlyLeaveMinutes;
     }
 
@@ -220,10 +229,13 @@ class AttendanceCalculationService
      * @param Carbon|null $checkOut
      * @param int $workedMinutes
      * @param int $lateMinutes
+     * @param int $lateGraceMinutes
+     * @param int $earlyLeaveMinutes
+     * @param int $earlyLeaveGraceMinutes
      * @param int $shiftDuration
      * @return string
      */
-    protected function calculateStatus($manualStatus, $checkIn, $checkOut, $workedMinutes, $lateMinutes, $shiftDuration)
+    protected function calculateStatus($manualStatus, $checkIn, $checkOut, $workedMinutes, $lateMinutes, $lateGraceMinutes, $earlyLeaveMinutes, $earlyLeaveGraceMinutes, $shiftDuration)
     {
         // Priority 1: Manual status (Holiday, Weekly Off, Leave)
         if ($manualStatus && in_array($manualStatus, ['Holiday', 'Weekly Off', 'Leave'])) {
@@ -245,12 +257,12 @@ class AttendanceCalculationService
             return 'Half Day';
         }
 
-        // Priority 5: Late minutes > 0
-        if ($lateMinutes > 0) {
+        // Priority 5: Late (only if late minutes exceed grace period)
+        if ($lateMinutes > $lateGraceMinutes || $earlyLeaveMinutes > $earlyLeaveGraceMinutes) {
             return 'Late';
         }
 
-        // Priority 6: Present
+        // Priority 6: Present (early leave within grace is still Present)
         return 'Present';
     }
 }
